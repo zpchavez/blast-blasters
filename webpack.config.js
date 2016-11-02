@@ -1,10 +1,12 @@
 var Webpack = require('webpack');
 var WebpackError = require('webpack-error-notification');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var path = require('path');
-var npmPath = path.resolve(__dirname, 'node_modules');
 
-var appFolder = './game';
+var npmPath = path.resolve(__dirname, 'node_modules');
+var appFolder = './src';
+var buildPath = path.resolve(__dirname, 'build');
 var environment = (process.env.APP_ENV || 'development');
 var __HOSTNAME__ = 'localhost';
 var __PORT__ = 9123;
@@ -28,7 +30,6 @@ var config = {
       inject: false
     }),
   ],
-  reactLoaders: ['babel'],
 };
 
 config.devtools = '#inline-source-map';
@@ -37,7 +38,13 @@ if (environment === 'development') {
   config.plugins.push(
     new Webpack.HotModuleReplacementPlugin(),
     new Webpack.NoErrorsPlugin(),
-    new WebpackError(process.platform)
+    new WebpackError(process.platform),
+    new CopyWebpackPlugin([
+        {
+            from: npmPath + '/phaser/build/phaser.min.js',
+            to: buildPath + '/lib/phaser.min.js',
+        }
+    ])
   );
 }
 
@@ -46,7 +53,7 @@ module.exports = [{
   entry: config.entries.app,
   output: {
     filename: 'app.js',
-    path: path.resolve(__dirname, 'build'),
+    path: buildPath,
     publicPath: '/',
   },
   module: {
