@@ -4,6 +4,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var path = require('path');
 
+var assetsPath = path.resolve(__dirname, 'assets');
 var npmPath = path.resolve(__dirname, 'node_modules');
 var appFolder = './src';
 var buildPath = path.resolve(__dirname, 'build');
@@ -43,6 +44,10 @@ if (environment === 'development') {
         {
             from: npmPath + '/phaser/build/phaser.min.js',
             to: buildPath + '/lib/phaser.min.js',
+        },
+        {
+            from: assetsPath,
+            to: buildPath + '/assets',
         }
     ])
   );
