@@ -3,10 +3,7 @@ export const RIGHT_STICK = 'RIGHT_STICK';
 export const FIRE = 'FIRE';
 
 const gamepadButtonMappings = {};
-gamepadButtonMappings[FIRE] = [
-    Phaser.Gamepad.XBOX360_RIGHT_BUMPER,
-    Phaser.Gamepad.XBOX360_RIGHT_TRIGGER,
-];
+gamepadButtonMappings[FIRE] = Phaser.Gamepad.XBOX360_RIGHT_BUMPER;
 
 class Controls
 {
