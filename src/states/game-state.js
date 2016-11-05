@@ -22,6 +22,10 @@ class GameState extends Phaser.State
             'tileset',
             'assets/maps/tileset.png'
         );
+
+        this.rng = new Phaser.RandomDataGenerator(
+            [new Date().getTime().toString()]
+        );
     }
 
     create()
@@ -35,10 +39,10 @@ class GameState extends Phaser.State
     update()
     {
         if (this.controls.isDown(0, LEFT_STICK)) {
-            this.player.accelerate(this.controls.getLeftStickAngle(0));
+            this.players[0].accelerate(this.controls.getLeftStickAngle(0));
         }
         if (this.controls.isDown(0, RIGHT_STICK)) {
-            this.player.aim(this.controls.getRightStickAngle(0));
+            this.players[0].aim(this.controls.getRightStickAngle(0));
         }
     }
 
@@ -71,21 +75,39 @@ class GameState extends Phaser.State
 
     initPlayers()
     {
-        this.player = Player.create(
-            0,
-            this.game,
-            this.game.world.width / 2,
-            this.game.world.height / 2 - 200
-        );
-        this.player.addToCollisionGroup(this.collisionGroup);
-        this.game.world.addChild(this.player);
+        this.players = [];
+        this.players.push(Player.create(0, this.game));
+        this.players[0].addToCollisionGroup(this.collisionGroup);
+        this.game.world.addChild(this.players[0]);
+        this.spawnPlayers();
     }
 
     initInputs()
     {
         this.controls = new Controls(this.game);
         this.controls.onDown(0, FIRE, () => {
-            this.player.fire();
+            this.players[0].fire();
+        });
+    }
+
+    spawnPlayers()
+    {
+        const spawnPointsLayer = this.map.createLayer('spawn-points');
+        spawnPointsLayer.visible = false;
+
+        const spawnPoints = [];
+        spawnPointsLayer.layer.data.forEach(row => {
+            row.forEach(tile => {
+                if (tile.index !== -1) {
+                    spawnPoints.push(new Phaser.Point(tile.worldX, tile.worldY));
+                }
+            })
+        });
+
+        this.players.forEach(player => {
+            const pointIndex = this.rng.between(0, spawnPoints.length - 1);
+            const point = spawnPoints.splice(pointIndex, 1)[0];
+            player.reset(point.x + 16, point.y + 16);
         });
     }
 }
