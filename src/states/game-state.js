@@ -52,6 +52,7 @@ class GameState extends Phaser.State
         this.game.physics.startSystem(Phaser.Physics.P2JS);
         this.collisionGroup = this.game.physics.p2.createCollisionGroup();
         this.game.physics.p2.contactMaterial.restitution = 0; // No bouncing
+        this.game.physics.p2.contactMaterial.friction = 100;
     }
 
     initMap()
