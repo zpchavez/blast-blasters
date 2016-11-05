@@ -22,8 +22,6 @@ class Beam extends AbstractObject
     {
         this.state.game.physics.p2.enable(this);
 
-        this.body.kinematic = true;
-
         this.body.data.shapes.forEach(shape => {
             shape.sensor = true;
         });
@@ -33,6 +31,8 @@ class Beam extends AbstractObject
                 contactingBody.sprite.playerNumber !== this.shotBy
             ) {
                 this.hit(contactingBody.sprite);
+                this.destroy();
+            } else if (! Player.prototype.isPrototypeOf(contactingBody.sprite)) {
                 this.destroy();
             }
         }, this);
