@@ -9,14 +9,19 @@ class Player extends AbstractObject
         super(game, x, y, key, frame);
 
         this.state = game.state;
-        game.physics.p2.enable(this);
-        this.body.mass = 5;
-        this.body.damping = 0.99;
+        this.initPhysics();
         this.aimAngle = Phaser.Math.degToRad(0);
     }
 
     update()
     {
+    }
+
+    initPhysics()
+    {
+        this.state.game.physics.p2.enable(this);
+        this.body.mass = 5;
+        this.body.damping = 0.99;
     }
 
     getPlayerRefVelocity()

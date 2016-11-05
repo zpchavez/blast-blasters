@@ -39,19 +39,23 @@ if (environment === 'development') {
   config.plugins.push(
     new Webpack.HotModuleReplacementPlugin(),
     new Webpack.NoErrorsPlugin(),
-    new WebpackError(process.platform),
+    new WebpackError(process.platform)
+  );
+}
+
+var phaserFilename = (environment === 'development') ? 'phaser.js' : 'phaser.min.js';
+config.plugins.push(
     new CopyWebpackPlugin([
         {
-            from: npmPath + '/phaser/build/phaser.min.js',
-            to: buildPath + '/lib/phaser.min.js',
+            from: npmPath + '/phaser/build/' + phaserFilename,
+            to: buildPath + '/lib/phaser.js',
         },
         {
             from: assetsPath,
             to: buildPath + '/assets',
         }
     ])
-  );
-}
+)
 
 module.exports = [{
   name: 'app bundle',
