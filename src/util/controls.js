@@ -1,3 +1,5 @@
+export const LEFT_STICK = 'LEFT_STICK';
+
 class Controls
 {
     constructor(game)
@@ -33,6 +35,13 @@ class Controls
                 this.onLeftStickChangedCallbacks[player](this.getLeftStickAngle(player));
             }
         };
+    }
+
+    isDown(player, button) {
+        if (button === LEFT_STICK && this.getLeftStickAngle(player) !== false) {
+            return true;
+        }
+        return false;
     }
 
     getLeftStickAngle(player) {

@@ -1,5 +1,5 @@
 import Player from '../objects/player';
-import Controls from '../util/controls';
+import Controls, { LEFT_STICK } from '../util/controls';
 
 class GameState extends Phaser.State
 {
@@ -20,9 +20,8 @@ class GameState extends Phaser.State
     }
 
     update() {
-        var leftStickAngle = this.controls.getLeftStickAngle(0);
-        if (leftStickAngle !== false) {
-            this.player.accelerate(leftStickAngle);
+        if (this.controls.isDown(0, LEFT_STICK)) {
+            this.player.accelerate(this.controls.getLeftStickAngle(0));
         }
     }
 
