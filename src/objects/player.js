@@ -1,6 +1,6 @@
 import { rotateVector } from '../util/math';
 import AbstractObject from './abstract-object';
-import Beam from './beam';
+import Projectile from './projectile';
 
 class Player extends AbstractObject
 {
@@ -62,14 +62,14 @@ class Player extends AbstractObject
             this.y + (yRotation),
         ];
 
-        let beam = Beam.create(this.state.game, spawnPoint[0], spawnPoint[1]);
-        beam.addToCollisionGroup(this.collisionGroup);
-        this.game.world.addChild(beam);
+        let projectile = Projectile.create(this.state.game, spawnPoint[0], spawnPoint[1]);
+        projectile.addToCollisionGroup(this.collisionGroup);
+        this.game.world.addChild(projectile);
 
         let velocity = rotateVector(this.aimAngle, [0, this.getBeamVelocity() * -1]);
-        beam.body.velocity.x = velocity[0];
-        beam.body.velocity.y = velocity[1];
-        beam.shotBy = this.playerNumber;
+        projectile.body.velocity.x = velocity[0];
+        projectile.body.velocity.y = velocity[1];
+        projectile.shotBy = this.playerNumber;
     }
 
     getBeamVelocity()
@@ -91,7 +91,7 @@ Player.create = (playerNum, game, x, y) => {
 
 Player.loadAssets = (state) => {
     state.load.image('player', 'assets/img/player.png');
-    state.load.image('beam', 'assets/img/basic-beam.png');
+    state.load.image('projectile', 'assets/img/basic-projectile.png');
 };
 
 export default Player;
