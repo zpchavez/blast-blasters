@@ -21,10 +21,6 @@ class ScoreboardState extends Phaser.State
     {
         globalState.get('score').forEach((score, index) => {
             const color = colors[globalState.get('colors')[index]];
-            let skulls = '';
-            for (var i = 0; i < score; i += 1) {
-                skulls += '💀';
-            }
             this.game.add.text(
                 this.game.width / 2 - 200,
                 this.game.height / 3 + (index * 50),
