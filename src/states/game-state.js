@@ -5,6 +5,7 @@ import Controls, {
     LEFT_STICK,
     RIGHT_STICK,
 } from '../util/controls';
+import globalState from '../util/global-state';
 
 class GameState extends Phaser.State
 {
@@ -28,6 +29,8 @@ class GameState extends Phaser.State
     create()
     {
         this.numPlayers = queryString.parse(window.location.search).players || 1;
+
+        globalState.setInitialScore(this.numPlayers);
 
         this.rng = new Phaser.RandomDataGenerator(
             [new Date().getTime().toString()]

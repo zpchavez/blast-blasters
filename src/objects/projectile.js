@@ -1,5 +1,6 @@
 import AbstractObject from './abstract-object'
 import Player from './player';
+import globalState from '../util/global-state';
 
 class Projectile extends AbstractObject
 {
@@ -28,9 +29,9 @@ class Projectile extends AbstractObject
 
         this.body.onBeginContact.add(function (contactingBody) {
             if (Player.prototype.isPrototypeOf(contactingBody.sprite) &&
-                contactingBody.sprite.playerNumber !== this.shotBy
+                contactingBody.sprite.playerNum !== this.shotBy
             ) {
-                this.hit(contactingBody.sprite);
+                this.hit(this.shotBy, contactingBody.sprite);
                 this.destroy();
             } else if (! Player.prototype.isPrototypeOf(contactingBody.sprite)) {
                 this.destroy();
@@ -38,9 +39,10 @@ class Projectile extends AbstractObject
         }, this);
     }
 
-    hit(player)
+    hit(shotBy, player)
     {
-        console.log('hit the player');
+        player.destroy();
+        globalState.state.score[shotBy] += 1;
     }
 }
 

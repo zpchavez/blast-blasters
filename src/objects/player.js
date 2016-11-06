@@ -72,7 +72,7 @@ class Player extends AbstractObject
         let velocity = rotateVector(this.aimAngle, [0, this.getBeamVelocity() * -1]);
         projectile.body.velocity.x = velocity[0];
         projectile.body.velocity.y = velocity[1];
-        projectile.shotBy = this.playerNumber;
+        projectile.shotBy = this.playerNum;
     }
 
     getBeamVelocity()
