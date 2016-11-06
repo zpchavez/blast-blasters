@@ -1,6 +1,5 @@
 import AbstractObject from './abstract-object'
 import Player from './player';
-import globalState from '../util/global-state';
 
 class Projectile extends AbstractObject
 {
@@ -31,18 +30,12 @@ class Projectile extends AbstractObject
             if (Player.prototype.isPrototypeOf(contactingBody.sprite) &&
                 contactingBody.sprite.playerNum !== this.shotBy
             ) {
-                this.hit(this.shotBy, contactingBody.sprite);
+                contactingBody.sprite.getHit(this.shotBy);
                 this.destroy();
             } else if (! Player.prototype.isPrototypeOf(contactingBody.sprite)) {
                 this.destroy();
             }
         }, this);
-    }
-
-    hit(shotBy, player)
-    {
-        player.destroy();
-        globalState.state.score[shotBy] += 1;
     }
 }
 

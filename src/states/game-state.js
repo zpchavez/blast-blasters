@@ -6,6 +6,7 @@ import Controls, {
     RIGHT_STICK,
 } from '../util/controls';
 import globalState from '../util/global-state';
+import ScoreboardState from './scoreboard-state';
 
 class GameState extends Phaser.State
 {
@@ -30,7 +31,9 @@ class GameState extends Phaser.State
     {
         this.numPlayers = queryString.parse(window.location.search).players || 1;
 
-        globalState.setInitialScore(this.numPlayers);
+        if (! globalState.get('score')) {
+            globalState.setInitialScore(this.numPlayers);
+        }
 
         this.rng = new Phaser.RandomDataGenerator(
             [new Date().getTime().toString()]
@@ -52,6 +55,11 @@ class GameState extends Phaser.State
                 player.aim(this.controls.getRightStickAngle(playerNumber));
             }
         });
+
+        let remainingPlayers = this.players.filter(player => player.game !== null).length;
+        if (remainingPlayers <= 1) {
+            this.endRound();
+        }
     }
 
     shutdown()
@@ -85,9 +93,14 @@ class GameState extends Phaser.State
     {
         let playerNumber = 0;
         this.players = [];
+        this.roundScore = [];
         for (let playerNumber = 0; playerNumber < this.numPlayers; playerNumber += 1) {
+            this.roundScore.push(0);
             this.players.push(Player.create(playerNumber, this.game));
             this.players[playerNumber].addToCollisionGroup(this.collisionGroup);
+            this.players[playerNumber].setGetHitCallback(hitBy => {
+                this.roundScore[playerNumber] += 1;
+            });
             this.game.world.addChild(this.players[playerNumber]);
         }
         this.spawnPlayers();
@@ -122,6 +135,15 @@ class GameState extends Phaser.State
             const point = spawnPoints.splice(pointIndex, 1)[0];
             player.reset(point.x + 16, point.y + 16);
         });
+    }
+
+    endRound()
+    {
+        this.game.state.add(
+            'round-score',
+            new ScoreboardState(this.roundScore),
+            true
+        );
     }
 }
 

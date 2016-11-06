@@ -75,6 +75,18 @@ class Player extends AbstractObject
         projectile.shotBy = this.playerNum;
     }
 
+    getHit(hitBy)
+    {
+        globalState.state.score[hitBy] += 1;
+        this.getHitCallback(hitBy);
+        this.destroy();
+    }
+
+    setGetHitCallback(callback)
+    {
+        this.getHitCallback = callback;
+    }
+
     getBeamVelocity()
     {
         return 800;

@@ -25,7 +25,7 @@ export default {
 
     setInitialScore: function(players) {
         if (players) {
-            this.set('players', players);
+            this.set('players', parseInt(players, 10));
         }
 
         this.state.score = new Array(this.state.players).fill(0);
