@@ -3,6 +3,7 @@ import AbstractObject from './abstract-object';
 import Projectile from './projectile';
 import globalState from '../util/global-state';
 import colors from '../data/colors';
+import delay from '../util/delay'
 
 class Player extends AbstractObject
 {
@@ -13,6 +14,7 @@ class Player extends AbstractObject
         this.state = game.state;
         this.initPhysics();
         this.aimAngle = Phaser.Math.degToRad(0);
+        this.dashState = 'READY';
     }
 
     update()
@@ -69,10 +71,39 @@ class Player extends AbstractObject
         projectile.addToCollisionGroup(this.collisionGroup);
         this.game.world.addChild(projectile);
 
-        let velocity = rotateVector(this.aimAngle, [0, this.getBeamVelocity() * -1]);
+        let velocity = rotateVector(this.aimAngle, [0, this.getProjectileVelocity() * -1]);
         projectile.body.velocity.x = velocity[0];
         projectile.body.velocity.y = velocity[1];
         projectile.shotBy = this.playerNum;
+    }
+
+    dash()
+    {
+        if (this.dashState !== 'READY') {
+            return;
+        }
+
+        this.dashState = 'DASHING';
+        delay(
+            () => {
+                this.dashState = 'POST_DASH'
+            },
+            500
+        )
+        .then(delay.bind(
+            this,
+            () => {
+                this.dashState = 'COOLDOWN';
+            },
+            500
+        ))
+        .then(delay.bind(
+            this,
+            () => {
+                this.dashState = 'READY';
+            },
+            500
+        ));
     }
 
     getHit(hitBy)
@@ -87,14 +118,32 @@ class Player extends AbstractObject
         this.getHitCallback = callback;
     }
 
-    getBeamVelocity()
+    getProjectileVelocity()
     {
         return 800;
     }
 
+    getDashMultiplier()
+    {
+        switch (this.dashState) {
+            case 'READY':
+            case 'COOLDOWN':
+                return 1;
+            case 'DASHING':
+                return 3;
+            case 'POST_DASH':
+                return 0.3;
+        }
+    }
+
+    getAccelerationMultiplier()
+    {
+        return this.getDashMultiplier();
+    }
+
     getAccelerationForce()
     {
-        return 400;
+        return 400 * this.getAccelerationMultiplier();
     }
 }
 

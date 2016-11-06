@@ -1,6 +1,7 @@
 import queryString from 'query-string';
 import Player from '../objects/player';
 import Controls, {
+    DASH,
     FIRE,
     LEFT_STICK,
     RIGHT_STICK,
@@ -110,9 +111,8 @@ class GameState extends Phaser.State
     {
         this.controls = new Controls(this.game);
         this.players.forEach((player, playerNumber) => {
-            this.controls.onDown(playerNumber, FIRE, () => {
-                player.fire();
-            });
+            this.controls.onDown(playerNumber, FIRE, () => player.fire());
+            this.controls.onDown(playerNumber, DASH, () => player.dash());
         })
     }
 

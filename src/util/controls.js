@@ -5,7 +5,7 @@ export const DASH = 'DASH';
 
 const gamepadButtonMappings = {};
 gamepadButtonMappings[FIRE] = Phaser.Gamepad.XBOX360_RIGHT_BUMPER;
-gamepadButtonMappings[DASH_CHARGE] = Phaser.Gamepad.XBOX360_LEFT_BUMPER;
+gamepadButtonMappings[DASH] = Phaser.Gamepad.XBOX360_LEFT_BUMPER;
 
 class Controls
 {
