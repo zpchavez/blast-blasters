@@ -1,6 +1,8 @@
 import { rotateVector } from '../util/math';
 import AbstractObject from './abstract-object';
 import Projectile from './projectile';
+import globalState from '../util/global-state';
+import colors from '../data/colors';
 
 class Player extends AbstractObject
 {
@@ -63,6 +65,7 @@ class Player extends AbstractObject
         ];
 
         let projectile = Projectile.create(this.state.game, spawnPoint[0], spawnPoint[1]);
+        projectile.tint = colors[globalState.get('colors')[this.playerNum]].hex;
         projectile.addToCollisionGroup(this.collisionGroup);
         this.game.world.addChild(projectile);
 
@@ -86,6 +89,7 @@ class Player extends AbstractObject
 Player.create = (playerNum, game, x, y) => {
     var player = new Player(game, x, y, 'player');
     player.playerNum = playerNum;
+    player.tint = colors[globalState.get('colors')[playerNum]].hex;
     return player;
 };
 
