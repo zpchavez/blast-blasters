@@ -1,3 +1,4 @@
+import queryString from 'query-string';
 import Player from '../objects/player';
 import Controls, {
     FIRE,
@@ -22,14 +23,16 @@ class GameState extends Phaser.State
             'tileset',
             'assets/maps/tileset.png'
         );
-
-        this.rng = new Phaser.RandomDataGenerator(
-            [new Date().getTime().toString()]
-        );
     }
 
     create()
     {
+        this.numPlayers = queryString.parse(window.location.search).players || 1;
+
+        this.rng = new Phaser.RandomDataGenerator(
+            [new Date().getTime().toString()]
+        );
+
         this.initPhysics();
         this.initMap();
         this.initPlayers();
@@ -38,12 +41,14 @@ class GameState extends Phaser.State
 
     update()
     {
-        if (this.controls.isDown(0, LEFT_STICK)) {
-            this.players[0].accelerate(this.controls.getLeftStickAngle(0));
-        }
-        if (this.controls.isDown(0, RIGHT_STICK)) {
-            this.players[0].aim(this.controls.getRightStickAngle(0));
-        }
+        this.players.forEach((player, playerNumber) => {
+            if (this.controls.isDown(playerNumber, LEFT_STICK)) {
+                player.accelerate(this.controls.getLeftStickAngle(playerNumber));
+            }
+            if (this.controls.isDown(playerNumber, RIGHT_STICK)) {
+                player.aim(this.controls.getRightStickAngle(playerNumber));
+            }
+        });
     }
 
     shutdown()
@@ -75,19 +80,24 @@ class GameState extends Phaser.State
 
     initPlayers()
     {
+        let playerNumber = 0;
         this.players = [];
-        this.players.push(Player.create(0, this.game));
-        this.players[0].addToCollisionGroup(this.collisionGroup);
-        this.game.world.addChild(this.players[0]);
+        for (let playerNumber = 0; playerNumber < this.numPlayers; playerNumber += 1) {
+            this.players.push(Player.create(playerNumber, this.game));
+            this.players[playerNumber].addToCollisionGroup(this.collisionGroup);
+            this.game.world.addChild(this.players[playerNumber]);
+        }
         this.spawnPlayers();
     }
 
     initInputs()
     {
         this.controls = new Controls(this.game);
-        this.controls.onDown(0, FIRE, () => {
-            this.players[0].fire();
-        });
+        this.players.forEach((player, playerNumber) => {
+            this.controls.onDown(playerNumber, FIRE, () => {
+                player.fire();
+            });
+        })
     }
 
     spawnPlayers()

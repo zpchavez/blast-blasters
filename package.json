@@ -30,6 +30,7 @@
     "express-http-proxy": "^0.10.1",
     "html-webpack-plugin": "^2.24.1",
     "phaser": "^2.6.2",
+    "query-string": "^4.2.3",
     "request": "^2.76.0",
     "webpack": "^1.13.3",
     "webpack-dev-middleware": "^1.8.4",
