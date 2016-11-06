@@ -13,9 +13,11 @@ class Projectile extends AbstractObject
 
     update()
     {
-        if (! this.inCamera) {
-            this.destroy();
+        if (this.game === null) {
+            return;
         }
+
+        this.game.world.wrap(this.body);
     }
 
     createPhysicsBody()

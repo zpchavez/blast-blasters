@@ -19,6 +19,11 @@ class Player extends AbstractObject
 
     update()
     {
+        if (this.game === null) {
+            return;
+        }
+
+        this.game.world.wrap(this.body);
     }
 
     initPhysics()

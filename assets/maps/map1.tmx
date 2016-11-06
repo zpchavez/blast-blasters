@@ -5,7 +5,7 @@
  </tileset>
  <layer name="walls" width="40" height="22">
   <data encoding="base64" compression="zlib">
-   eJxjZGBgYBzkeLCCUfdRBtDdR880QIxd2Pi4zKKF+wiJj7oPN6Cm++gJRor7aFUHjBT30QoMR/cN9vJl1H3YxYda+2CwgVH3UQZIrQMGAgMApasA0Q==
+   eJxjZGBgYBzkeLCCUfdRBtDdR880QIxd2Pi4zKKF+wiJj7oPN6Cm++gJ8LlnsLmPFDlsamlRBww19w329Dcc3DfYy5dR92EXH2rtg8EGRt1HGSC1DhgIDAB6fwDL
   </data>
  </layer>
  <layer name="spawn-points" width="40" height="22">
