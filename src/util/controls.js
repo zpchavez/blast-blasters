@@ -1,9 +1,11 @@
 export const LEFT_STICK = 'LEFT_STICK';
 export const RIGHT_STICK = 'RIGHT_STICK';
 export const FIRE = 'FIRE';
+export const DASH = 'DASH';
 
 const gamepadButtonMappings = {};
 gamepadButtonMappings[FIRE] = Phaser.Gamepad.XBOX360_RIGHT_BUMPER;
+gamepadButtonMappings[DASH_CHARGE] = Phaser.Gamepad.XBOX360_LEFT_BUMPER;
 
 class Controls
 {
@@ -14,6 +16,7 @@ class Controls
         this.rightStickX = [0, 0, 0, 0];
         this.rightStickY = [0, 0, 0, 0];
         this.onDownMappings = [{}, {}, {}, {}];
+        this.onUpMappings = [{}, {}, {}, {}];
 
         for (var player = 0; player < 4; player += 1) {
             game.input.gamepad['pad' + (player + 1)].onAxisCallback = (
@@ -21,6 +24,9 @@ class Controls
             );
             game.input.gamepad['pad' + (player + 1)].onDownCallback = (
                 this._getGamepadDownCallback(player)
+            );
+            game.input.gamepad['pad' + (player + 1)].onUpCallback = (
+                this._getGamepadUpCallback(player)
             );
         }
 
@@ -35,17 +41,33 @@ class Controls
             return true;
         } else if (button === RIGHT_STICK && this.getRightStickAngle(player) !== false) {
             return true;
+        } else if ([LEFT_STICK, RIGHT_STICK].indexOf(button) !== -1) {
+            return;
         }
-        return false;
+
+        let isDown = false;
+        this._getGamepadConstants(button).forEach(buttonConstant => {
+            if (this.game.input.gamepad['pad' + (player + 1)].isDown(buttonConstant)) {
+                isDown = true;
+            }
+        });
+
+        return isDown;
     }
 
     onDown(player, button, callback)
     {
-        // Map for gamepad
-        this._getGamepadConstants(button).forEach(function (buttonConstant) {
+        this._getGamepadConstants(button).forEach(buttonConstant => {
             this.onDownMappings[player][buttonConstant] = callback;
-        }.bind(this));
-    };
+        });
+    }
+
+    onUp(player, button, callback)
+    {
+        this._getGamepadConstants(button).forEach(buttonConstant => {
+            this.onUpMappings[player][buttonConstant] = callback;
+        });
+    }
 
     getLeftStickAngle(player)
     {
@@ -73,7 +95,10 @@ class Controls
 
     _getGamepadConstants(button)
     {
-        if (typeof gamepadButtonMappings[button] === 'undefined') {
+        if (
+            typeof gamepadButtonMappings[button] === 'undefined' &&
+            ['LEFT_STICK', 'RIGHT_STICK'].indexOf(button) === -1
+        ) {
             throw new Error('Unknown button: ' + button);
         }
 
@@ -113,7 +138,21 @@ class Controls
                 playerMappings[button]();
             }
         };
-    };
+    }
+
+    _getGamepadUpCallback(player)
+    {
+        var playerMappings = this.onUpMappings[player];
+        if (! playerMappings) {
+            return function() {};
+        }
+
+        return function (button) {
+            if (playerMappings[button]) {
+                playerMappings[button]();
+            }
+        };
+    }
 }
 
 export default Controls;
