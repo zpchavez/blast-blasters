@@ -29,7 +29,7 @@ class GameState extends Phaser.State
 
     create()
     {
-        this.numPlayers = queryString.parse(window.location.search).players || 1;
+        this.numPlayers = queryString.parse(window.location.search).players || 2;
 
         if (! globalState.get('score')) {
             globalState.setInitialScore(this.numPlayers);

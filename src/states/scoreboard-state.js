@@ -27,7 +27,7 @@ class ScoreboardState extends Phaser.State
             }
             this.game.add.text(
                 this.game.width / 2 - 200,
-                this.game.height / 2 + (index * 50),
+                this.game.height / 3 + (index * 50),
                 color.name.charAt(0).toUpperCase() + color.name.substr(1),
                 {
                     font: '32px Arial',
@@ -38,10 +38,13 @@ class ScoreboardState extends Phaser.State
             );
             this.game.add.text(
                 this.game.width / 2 - 80,
-                this.game.height / 2 + 5 + (index * 50),
-                skulls,
+                this.game.height / 3 + (index * 50),
+                score,
                 {
                     font: '32px Arial',
+                    fill: '#' + leftpad(color.hex.toString(16), 6, 0),
+                    stroke: '#ffffff',
+                    strokeThickness: 2,
                 }
             );
         });
