@@ -1,3 +1,4 @@
+import AbstractState from './abstract-state';
 import queryString from 'query-string';
 import Player from '../objects/player';
 import Controls, {
@@ -9,16 +10,18 @@ import Controls, {
 } from '../util/controls';
 import globalState from '../util/global-state';
 import ScoreboardState from './scoreboard-state';
+import rng from '../util/rng';
 
-class GameState extends Phaser.State
+class GameState extends AbstractState
 {
     preload()
     {
         Player.loadAssets(this);
 
+        const mapToLoad = rng.between(1, 3);
         this.load.tilemap(
             'map',
-            'assets/maps/map1.json',
+            `assets/maps/map${mapToLoad}.json`,
             null,
             Phaser.Tilemap.TILED_JSON
         );
@@ -31,15 +34,13 @@ class GameState extends Phaser.State
 
     create()
     {
+        super.create();
+
         this.numPlayers = queryString.parse(window.location.search).players || 2;
 
         if (! globalState.get('score')) {
             globalState.setInitialScore(this.numPlayers);
         }
-
-        this.rng = new Phaser.RandomDataGenerator(
-            [new Date().getTime().toString()]
-        );
 
         this.initPhysics();
         this.initMap();
@@ -115,7 +116,7 @@ class GameState extends Phaser.State
             this.controls.onDown(playerNumber, FIRE, () => player.fire());
             this.controls.onDown(playerNumber, DASH, () => player.dash());
             this.controls.onDown(playerNumber, RELOAD, () => player.reload());
-        })
+        });
     }
 
     spawnPlayers()
@@ -133,7 +134,7 @@ class GameState extends Phaser.State
         });
 
         this.players.forEach(player => {
-            const pointIndex = this.rng.between(0, spawnPoints.length - 1);
+            const pointIndex = rng.between(0, spawnPoints.length - 1);
             const point = spawnPoints.splice(pointIndex, 1)[0];
             player.reset(point.x + 16, point.y + 16);
         });
