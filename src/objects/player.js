@@ -15,6 +15,8 @@ class Player extends AbstractObject
         this.initPhysics();
         this.aimAngle = Phaser.Math.degToRad(0);
         this.dashState = 'READY';
+        this.maxAmmo = 10;
+        this.ammo = this.maxAmmo;
     }
 
     update()
@@ -31,6 +33,7 @@ class Player extends AbstractObject
         this.state.game.physics.p2.enable(this);
         this.body.mass = 5;
         this.body.damping = 0.99;
+        this.body.fixedRotation = true;
     }
 
     getPlayerRefVelocity()
@@ -43,10 +46,9 @@ class Player extends AbstractObject
 
     accelerate(angle)
     {
-        this.body.rotation = angle;
         this.body.applyForce(
             rotateVector(
-                this.body.rotation,
+                angle,
                 [
                     0,
                     this.getAccelerationForce()
@@ -64,6 +66,18 @@ class Player extends AbstractObject
 
     fire()
     {
+        if (this.game === null || this.reloading) {
+            return;
+        }
+
+        if (this.ammo === 0) {
+            this.loadTexture('player-out-of-ammo');
+            delay(this.loadTexture.bind(this, 'player'), 100);
+            return;
+        }
+
+        this.ammo -= 1;
+
         let xRotation = Math.cos(this.aimAngle - (Math.PI / 180));
         let yRotation = Math.sin(this.aimAngle - (Math.PI / 180));
         let spawnPoint = [
@@ -80,6 +94,17 @@ class Player extends AbstractObject
         projectile.body.velocity.x = velocity[0];
         projectile.body.velocity.y = velocity[1];
         projectile.shotBy = this.playerNum;
+    }
+
+    reload()
+    {
+        this.reloading = true;
+        this.loadTexture('player-reloading');
+        delay(() => {
+            this.reloading = false;
+            this.ammo = this.maxAmmo;
+            this.loadTexture('player');
+        }, this.getReloadDelay());
     }
 
     dash()
@@ -123,6 +148,11 @@ class Player extends AbstractObject
         this.getHitCallback = callback;
     }
 
+    getReloadDelay()
+    {
+        return 1000;
+    }
+
     getProjectileVelocity()
     {
         return 800;
@@ -148,6 +178,10 @@ class Player extends AbstractObject
 
     getAccelerationForce()
     {
+        if (this.reloading) {
+            return 0;
+        }
+
         return 400 * this.getAccelerationMultiplier();
     }
 }
@@ -161,6 +195,8 @@ Player.create = (playerNum, game, x, y) => {
 
 Player.loadAssets = (state) => {
     state.load.image('player', 'assets/img/player.png');
+    state.load.image('player-out-of-ammo', 'assets/img/player-out-of-ammo.png');
+    state.load.image('player-reloading', 'assets/img/player-reloading.png');
     state.load.image('projectile', 'assets/img/basic-projectile.png');
 };
 

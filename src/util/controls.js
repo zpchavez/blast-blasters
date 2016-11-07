@@ -2,10 +2,12 @@ export const LEFT_STICK = 'LEFT_STICK';
 export const RIGHT_STICK = 'RIGHT_STICK';
 export const FIRE = 'FIRE';
 export const DASH = 'DASH';
+export const RELOAD = 'RELOAD';
 
 const gamepadButtonMappings = {};
 gamepadButtonMappings[FIRE] = Phaser.Gamepad.XBOX360_RIGHT_BUMPER;
 gamepadButtonMappings[DASH] = Phaser.Gamepad.XBOX360_LEFT_BUMPER;
+gamepadButtonMappings[RELOAD] = Phaser.Gamepad.XBOX360_RIGHT_TRIGGER;
 
 class Controls
 {

@@ -4,6 +4,7 @@ import Controls, {
     DASH,
     FIRE,
     LEFT_STICK,
+    RELOAD,
     RIGHT_STICK,
 } from '../util/controls';
 import globalState from '../util/global-state';
@@ -113,6 +114,7 @@ class GameState extends Phaser.State
         this.players.forEach((player, playerNumber) => {
             this.controls.onDown(playerNumber, FIRE, () => player.fire());
             this.controls.onDown(playerNumber, DASH, () => player.dash());
+            this.controls.onDown(playerNumber, RELOAD, () => player.reload());
         })
     }
 
