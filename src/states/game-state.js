@@ -9,6 +9,7 @@ import Controls, {
 } from '../util/controls';
 import globalState from '../util/global-state';
 import ScoreboardState from './scoreboard-state';
+import rng from '../util/rng';
 
 class GameState extends Phaser.State
 {
@@ -16,9 +17,10 @@ class GameState extends Phaser.State
     {
         Player.loadAssets(this);
 
+        const mapToLoad = rng.between(1, 2);
         this.load.tilemap(
             'map',
-            'assets/maps/map1.json',
+            `assets/maps/map${mapToLoad}.json`,
             null,
             Phaser.Tilemap.TILED_JSON
         );
@@ -36,10 +38,6 @@ class GameState extends Phaser.State
         if (! globalState.get('score')) {
             globalState.setInitialScore(this.numPlayers);
         }
-
-        this.rng = new Phaser.RandomDataGenerator(
-            [new Date().getTime().toString()]
-        );
 
         this.initPhysics();
         this.initMap();
@@ -133,7 +131,7 @@ class GameState extends Phaser.State
         });
 
         this.players.forEach(player => {
-            const pointIndex = this.rng.between(0, spawnPoints.length - 1);
+            const pointIndex = rng.between(0, spawnPoints.length - 1);
             const point = spawnPoints.splice(pointIndex, 1)[0];
             player.reset(point.x + 16, point.y + 16);
         });

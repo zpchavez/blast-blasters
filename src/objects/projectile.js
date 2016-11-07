@@ -24,6 +24,8 @@ class Projectile extends AbstractObject
     {
         this.state.game.physics.p2.enable(this);
 
+        this.body.damping = 0;
+
         this.body.data.shapes.forEach(shape => {
             shape.sensor = true;
         });
