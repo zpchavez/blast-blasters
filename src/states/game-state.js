@@ -1,3 +1,4 @@
+import AbstractState from './abstract-state';
 import queryString from 'query-string';
 import Player from '../objects/player';
 import Controls, {
@@ -11,7 +12,7 @@ import globalState from '../util/global-state';
 import ScoreboardState from './scoreboard-state';
 import rng from '../util/rng';
 
-class GameState extends Phaser.State
+class GameState extends AbstractState
 {
     preload()
     {
@@ -33,6 +34,8 @@ class GameState extends Phaser.State
 
     create()
     {
+        super.create();
+
         this.numPlayers = queryString.parse(window.location.search).players || 2;
 
         if (! globalState.get('score')) {
@@ -113,7 +116,7 @@ class GameState extends Phaser.State
             this.controls.onDown(playerNumber, FIRE, () => player.fire());
             this.controls.onDown(playerNumber, DASH, () => player.dash());
             this.controls.onDown(playerNumber, RELOAD, () => player.reload());
-        })
+        });
     }
 
     spawnPlayers()

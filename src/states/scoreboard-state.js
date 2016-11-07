@@ -1,9 +1,10 @@
+import AbstractState from './abstract-state';
 import GameState from './game-state';
 import globalState from '../util/global-state';
 import colors from '../data/colors';
 import leftpad from '../util/leftpad';
 
-class ScoreboardState extends Phaser.State
+class ScoreboardState extends AbstractState
 {
     constructor(roundScore)
     {
@@ -13,6 +14,8 @@ class ScoreboardState extends Phaser.State
 
     create()
     {
+        super.create();
+
         this.renderScore();
         setTimeout(this.loadNextRound.bind(this), 3000);
     }
