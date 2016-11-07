@@ -13,7 +13,7 @@ class Player extends AbstractObject
 
         this.state = game.state;
         this.initPhysics();
-        this.aimAngle = Phaser.Math.degToRad(0);
+        this.aimAngle = null;
         this.dashState = 'READY';
         this.maxAmmo = 10;
         this.ammo = this.maxAmmo;
@@ -66,7 +66,7 @@ class Player extends AbstractObject
 
     fire()
     {
-        if (this.game === null || this.reloading) {
+        if (this.game === null || this.reloading || this.aimAngle === null) {
             return;
         }
 
