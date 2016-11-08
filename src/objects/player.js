@@ -1,6 +1,7 @@
 import { rotateVector } from '../util/math';
 import AbstractObject from './abstract-object';
 import Projectile from './projectile';
+import ChargedProjectile from './charged-projectile';
 import globalState from '../util/global-state';
 import colors from '../data/colors';
 import delay from '../util/delay'
@@ -13,10 +14,15 @@ class Player extends AbstractObject
 
         this.state = game.state;
         this.initPhysics();
+
         this.aimAngle = null;
         this.dashState = 'READY';
+        this.chargeState = 'NOT_CHARGED';
         this.maxAmmo = 10;
         this.ammo = this.maxAmmo;
+
+        this.animations.add('charging', [0, 1], 6, true);
+        this.animations.add('charged', [0, 1], 24, true);
     }
 
     update()
@@ -60,16 +66,62 @@ class Player extends AbstractObject
         this.aimAngle = angle;
     }
 
-    fire()
+    charge()
     {
-        if (this.game === null || this.reloading || this.aimAngle === null) {
+        if (this.game === null) {
             return;
         }
 
-        if (this.ammo === 0) {
+        if (this.ammo < 1) {
             this.loadTexture('player-out-of-ammo');
             delay(this.loadTexture.bind(this, 'player'), 100);
             return;
+        }
+
+        this.animations.play('charging');
+        this.chargeState = 'CHARGING';
+        this.chargeEvent = this.game.time.events.add(this.getChargeTime(), () => {
+            if (this.isCharging()) {
+                this.chargeState = 'CHARGED';
+                this.animations.play('charged');
+            }
+        });
+    }
+
+    stopCharging()
+    {
+        if (this.game === null) {
+            return;
+        }
+
+        this.chargeState = 'NOT_CHARGED';
+        this.animations.stop();
+        this.frame = 0;
+        this.game.time.events.remove(this.chargeEvent);
+    }
+
+    isCharging()
+    {
+        return this.chargeState === 'CHARGING';
+    }
+
+    isCharged()
+    {
+        return this.chargeState === 'CHARGED';
+    }
+
+    fire()
+    {
+        if (this.game === null || this.reloading || this.ammo < 1 || this.aimAngle === null) {
+            this.stopCharging();
+            return;
+        }
+
+        let ProjectileClass = null;
+        if (this.isCharged()) {
+            ProjectileClass = ChargedProjectile;
+        } else {
+            ProjectileClass = Projectile;
         }
 
         this.ammo -= 1;
@@ -81,7 +133,7 @@ class Player extends AbstractObject
             this.y + (yRotation),
         ];
 
-        let projectile = Projectile.create(this.state.game, spawnPoint[0], spawnPoint[1]);
+        let projectile = ProjectileClass.create(this.state.game, spawnPoint[0], spawnPoint[1]);
         projectile.tint = colors[globalState.get('colors')[this.playerNum]].hex;
         projectile.addToCollisionGroup(this.collisionGroup);
         this.game.world.addChild(projectile);
@@ -90,6 +142,8 @@ class Player extends AbstractObject
         projectile.body.velocity.x = velocity[0];
         projectile.body.velocity.y = velocity[1];
         projectile.shotBy = this.playerNum;
+
+        this.stopCharging();
     }
 
     reload()
@@ -184,20 +238,26 @@ class Player extends AbstractObject
 
         return 400 * this.getAccelerationMultiplier();
     }
+
+    getChargeTime()
+    {
+        return 1000;
+    }
 }
 
 Player.create = (playerNum, game, x, y) => {
-    var player = new Player(game, x, y, 'player');
+    var player = new Player(game, x, y, 'player', 0);
     player.playerNum = playerNum;
     player.tint = colors[globalState.get('colors')[playerNum]].hex;
     return player;
 };
 
 Player.loadAssets = (state) => {
-    state.load.image('player', 'assets/img/player.png');
+    state.load.atlas('player', 'assets/img/player.png', 'assets/img/player.json');
     state.load.image('player-out-of-ammo', 'assets/img/player-out-of-ammo.png');
     state.load.image('player-reloading', 'assets/img/player-reloading.png');
     state.load.image('projectile', 'assets/img/basic-projectile.png');
+    state.load.image('charged-projectile', 'assets/img/charged-projectile.png');
 };
 
 export default Player;

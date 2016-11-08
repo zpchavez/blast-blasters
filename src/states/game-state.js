@@ -113,7 +113,8 @@ class GameState extends AbstractState
     {
         this.controls = new Controls(this.game);
         this.players.forEach((player, playerNumber) => {
-            this.controls.onDown(playerNumber, FIRE, () => player.fire());
+            this.controls.onDown(playerNumber, FIRE, () => player.charge());
+            this.controls.onUp(playerNumber, FIRE, () => player.fire());
             this.controls.onDown(playerNumber, DASH, () => player.dash());
             this.controls.onDown(playerNumber, RELOAD, () => player.reload());
         });
