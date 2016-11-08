@@ -36,16 +36,12 @@ class Player extends AbstractObject
         this.body.fixedRotation = true;
     }
 
-    getPlayerRefVelocity()
-    {
-        return rotateVector(
-            -this.body.rotation,
-            [this.body.velocity.x, this.body.velocity.y]
-        );
-    };
-
     accelerate(angle)
     {
+        if (this.game === null) {
+            return;
+        }
+
         this.body.applyForce(
             rotateVector(
                 angle,
@@ -98,6 +94,10 @@ class Player extends AbstractObject
 
     reload()
     {
+        if (this.game === null) {
+            return;
+        }
+
         this.reloading = true;
         this.loadTexture('player-reloading');
         delay(() => {
