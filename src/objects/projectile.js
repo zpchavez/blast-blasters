@@ -8,7 +8,7 @@ class Projectile extends AbstractObject
         super(game, x, y, key, frame);
 
         this.state = game.state;
-        this.createPhysicsBody(this.state);
+        this.initPhysics(this.state);
     }
 
     update()
@@ -20,7 +20,7 @@ class Projectile extends AbstractObject
         this.game.world.wrap(this.body);
     }
 
-    createPhysicsBody()
+    initPhysics()
     {
         this.state.game.physics.p2.enable(this);
 
