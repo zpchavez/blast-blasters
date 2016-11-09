@@ -96,13 +96,13 @@ class GameState extends AbstractState
     {
         let playerNumber = 0;
         this.players = [];
-        this.roundScore = [];
+        this.playerKills = [];
         for (let playerNumber = 0; playerNumber < this.numPlayers; playerNumber += 1) {
-            this.roundScore.push(0);
+            this.playerKills.push([])
             this.players.push(Player.create(playerNumber, this.game));
             this.players[playerNumber].addToCollisionGroup(this.collisionGroup);
             this.players[playerNumber].setGetHitCallback(hitBy => {
-                this.roundScore[playerNumber] += 1;
+                this.playerKills[hitBy].push(playerNumber);
             });
             this.game.world.addChild(this.players[playerNumber]);
         }
@@ -144,7 +144,7 @@ class GameState extends AbstractState
     {
         this.game.state.add(
             'round-score',
-            new ScoreboardState(this.roundScore),
+            new ScoreboardState(this.playerKills),
             true
         );
     }
