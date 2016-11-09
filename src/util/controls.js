@@ -33,6 +33,8 @@ class Controls
         }
 
         game.input.gamepad.start();
+        // Lower deadzone from default 0.26 for slightly more precise aiming
+        game.input.gamepad.setDeadZones(0.20);
 
         this.game = game;
     }
