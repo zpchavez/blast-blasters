@@ -17,6 +17,16 @@ class Player extends AbstractObject
         this.dashState = 'READY';
         this.maxAmmo = 10;
         this.ammo = this.maxAmmo;
+
+        this.cannonSprite = this.addChild(
+            game.make.sprite(
+                0,
+                0,
+                'cannon'
+            )
+        );
+        this.cannonSprite.visible = false;
+        this.cannonSprite.anchor.setTo(0.5, 0.5);
     }
 
     update()
@@ -57,6 +67,11 @@ class Player extends AbstractObject
 
     aim(angle)
     {
+        if (this.ammo > 0) {
+            this.cannonSprite.visible = true;
+        }
+        this.cannonSprite.rotation = angle;
+
         this.aimAngle = angle;
     }
 
@@ -90,6 +105,10 @@ class Player extends AbstractObject
         projectile.body.velocity.x = velocity[0];
         projectile.body.velocity.y = velocity[1];
         projectile.shotBy = this.playerNum;
+
+        if (this.ammo < 1) {
+            this.cannonSprite.visible = false;
+        }
     }
 
     reload()
@@ -99,11 +118,13 @@ class Player extends AbstractObject
         }
 
         this.reloading = true;
+        this.cannonSprite.visible = false;
         this.loadTexture('player-reloading');
         delay(() => {
             this.reloading = false;
             this.ammo = this.maxAmmo;
             this.loadTexture('player');
+            this.cannonSprite.visible = true;
         }, this.getReloadDelay());
     }
 
@@ -198,6 +219,7 @@ Player.loadAssets = (state) => {
     state.load.image('player-out-of-ammo', 'assets/img/player-out-of-ammo.png');
     state.load.image('player-reloading', 'assets/img/player-reloading.png');
     state.load.image('projectile', 'assets/img/basic-projectile.png');
+    state.load.image('cannon', 'assets/img/cannon.png');
 };
 
 export default Player;
