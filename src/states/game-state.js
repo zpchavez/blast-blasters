@@ -59,6 +59,10 @@ class GameState extends AbstractState
             }
         });
 
+        if (this.playerHasEnoughKillsToWinTheGame()) {
+            this.endRound();
+        }
+
         let remainingPlayers = this.players.filter(player => player.game !== null).length;
         if (remainingPlayers <= 1) {
             this.endRound();
@@ -99,6 +103,9 @@ class GameState extends AbstractState
         this.playerKills = [];
         for (let playerNumber = 0; playerNumber < this.numPlayers; playerNumber += 1) {
             this.playerKills.push([])
+            if (globalState.get('eliminatedPlayers').indexOf(playerNumber) !== -1) {
+                continue;
+            }
             this.players.push(Player.create(playerNumber, this.game));
             this.players[playerNumber].addToCollisionGroup(this.collisionGroup);
             this.players[playerNumber].setGetHitCallback(hitBy => {
@@ -138,6 +145,19 @@ class GameState extends AbstractState
             const point = spawnPoints.splice(pointIndex, 1)[0];
             player.reset(point.x + 16, point.y + 16);
         });
+    }
+
+    playerHasEnoughKillsToWinTheGame()
+    {
+        let playerHasWon = false;
+
+        globalState.get('score').forEach(score => {
+            if (score >= 4) {
+                playerHasWon = true;
+            }
+        });
+
+        return playerHasWon;
     }
 
     endRound()

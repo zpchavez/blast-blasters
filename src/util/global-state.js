@@ -1,6 +1,7 @@
 const initialState = Object.assign(
     {
         colors: [0, 1, 2, 3],
+        eliminatedPlayers: [],
     }
 );
 

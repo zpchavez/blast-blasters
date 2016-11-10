@@ -1,5 +1,6 @@
 import AbstractState from './abstract-state';
 import GameState from './game-state';
+import MainMenuState from './main-menu-state';
 import globalState from '../util/global-state';
 import colors from '../data/colors';
 import leftpad from '../util/leftpad';
@@ -16,9 +17,35 @@ class ScoreboardState extends AbstractState
     {
         super.create();
 
-        this.renderPlayerKills();
-        this.renderScore();
-        setTimeout(this.loadNextRound.bind(this), 3000);
+        const winningPlayers = this.getWinningPlayers();
+
+        if (winningPlayers.length === 1) {
+            this.renderWinner(winningPlayers[0]);
+            setTimeout(this.returnToMainMenu.bind(this), 3000);
+        } else {
+            this.renderPlayerKills();
+            this.renderScore();
+            if (winningPlayers.length > 1) {
+                // It's a tie. The non-winning players are eliminated.
+                globalState.set('eliminatedPlayers', this.getNonWinningPlayers());
+            }
+            setTimeout(this.loadNextRound.bind(this), 3000);
+        }
+    }
+
+    renderWinner(player)
+    {
+        const winnerColor = colors[player];
+        const winnerText = this.game.add.text(
+            this.game.width / 2,
+            this.game.height / 2 - 100,
+            winnerColor.name.toUpperCase() + ' WINS!',
+            {
+                font: '42px Arial',
+                fill: '#ffffff',
+            }
+        )
+        winnerText.anchor.set(0.5);
     }
 
     renderPlayerKills()
@@ -99,9 +126,60 @@ class ScoreboardState extends AbstractState
         });
     }
 
+    /**
+     * Get array of players who have met the number of points
+     * required to win and who have more points than any other
+     * players
+     */
+    getWinningPlayers()
+    {
+        const scoreToPlayers = {};
+
+        globalState.get('score').forEach((score, player) => {
+            if (! scoreToPlayers[score]) {
+                scoreToPlayers[score] = [];
+            }
+            scoreToPlayers[score].push(player);
+        });
+
+        const sortedScores = globalState.get('score').sort((a, b) => a < b);
+        let winningPlayers = null;
+        sortedScores.forEach(score => {
+            if (winningPlayers === null && score >= this.getWinningScore()) {
+                winningPlayers = scoreToPlayers[score];
+            }
+        });
+
+        return winningPlayers;
+    }
+
+    getWinningScore()
+    {
+        return globalState.get('players') * 5;
+    }
+
+    getNonWinningPlayers()
+    {
+        const nonWinningPlayers = [];
+        const winningPlayers = this.getWinningPlayers();
+        globalState.get('score').forEach((score, player) => {
+            if (winningPlayers.indexOf(player) === -1) {
+                nonWinningPlayers.push(player);
+            }
+        });
+
+        return nonWinningPlayers;
+    }
+
     loadNextRound()
     {
         this.game.state.add('game', new GameState(), true);
+    }
+
+    returnToMainMenu()
+    {
+        globalState.reset();
+        this.game.state.add('main-menu', new MainMenuState(), true);
     }
 }
 
