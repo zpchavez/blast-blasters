@@ -3,11 +3,20 @@ export const RIGHT_STICK = 'RIGHT_STICK';
 export const FIRE = 'FIRE';
 export const DASH = 'DASH';
 export const RELOAD = 'RELOAD';
+export const UP = 'UP';
+export const DOWN = 'DOWN';
+export const SELECT = 'SELECT';
 
 const gamepadButtonMappings = {};
 gamepadButtonMappings[FIRE] = Phaser.Gamepad.XBOX360_RIGHT_BUMPER;
 gamepadButtonMappings[DASH] = Phaser.Gamepad.XBOX360_LEFT_BUMPER;
 gamepadButtonMappings[RELOAD] = Phaser.Gamepad.XBOX360_RIGHT_TRIGGER;
+gamepadButtonMappings[UP] = Phaser.Gamepad.XBOX360_DPAD_UP;
+gamepadButtonMappings[DOWN] = Phaser.Gamepad.XBOX360_DPAD_DOWN;
+gamepadButtonMappings[SELECT] = [
+    Phaser.Gamepad.XBOX360_RIGHT_BUMPER,
+    Phaser.Gamepad.XBOX360_A
+];
 
 class Controls
 {
@@ -83,6 +92,12 @@ class Controls
         return this._getStickAngle('right', player);
     }
 
+    reset()
+    {
+        this.onDownMappings = [{}, {}, {}, {}];
+        this.onUpMappings = [{}, {}, {}, {}];
+    }
+
     _getStickAngle(propertyPrefix, player) {
         let x, y;
         x = this[propertyPrefix + 'StickX'][player];
@@ -121,6 +136,14 @@ class Controls
             if (button === Phaser.Gamepad.XBOX360_STICK_LEFT_X) {
                 this.leftStickX[player] = value;
             } else if (button === Phaser.Gamepad.XBOX360_STICK_LEFT_Y) {
+                // Allow left stick to be used to trigger onDown for UP and DOWN
+                if (this.leftStickY[player] === 0) {
+                    if (value < 0 && this.onDownMappings[player][gamepadButtonMappings[UP]]) {
+                        this.onDownMappings[player][gamepadButtonMappings[UP]]();
+                    } else if (value > 0 && this.onDownMappings[player][gamepadButtonMappings[DOWN]]) {
+                        this.onDownMappings[player][gamepadButtonMappings[DOWN]]();
+                    }
+                }
                 this.leftStickY[player] = value;
             } else if (button === Phaser.Gamepad.XBOX360_STICK_RIGHT_X) {
                 this.rightStickX[player] = value;

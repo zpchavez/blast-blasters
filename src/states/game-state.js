@@ -36,7 +36,7 @@ class GameState extends AbstractState
     {
         super.create();
 
-        this.numPlayers = queryString.parse(window.location.search).players || 2;
+        this.numPlayers = globalState.get('players');
 
         if (! globalState.get('score')) {
             globalState.setInitialScore(this.numPlayers);
