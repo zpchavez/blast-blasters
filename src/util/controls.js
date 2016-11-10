@@ -136,6 +136,14 @@ class Controls
             if (button === Phaser.Gamepad.XBOX360_STICK_LEFT_X) {
                 this.leftStickX[player] = value;
             } else if (button === Phaser.Gamepad.XBOX360_STICK_LEFT_Y) {
+                // Allow left stick to be used to trigger onDown for UP and DOWN
+                if (this.leftStickY[player] === 0) {
+                    if (value < 0 && this.onDownMappings[player][gamepadButtonMappings[UP]]) {
+                        this.onDownMappings[player][gamepadButtonMappings[UP]]();
+                    } else if (value > 0 && this.onDownMappings[player][gamepadButtonMappings[DOWN]]) {
+                        this.onDownMappings[player][gamepadButtonMappings[DOWN]]();
+                    }
+                }
                 this.leftStickY[player] = value;
             } else if (button === Phaser.Gamepad.XBOX360_STICK_RIGHT_X) {
                 this.rightStickX[player] = value;
