@@ -3,11 +3,20 @@ export const RIGHT_STICK = 'RIGHT_STICK';
 export const FIRE = 'FIRE';
 export const DASH = 'DASH';
 export const RELOAD = 'RELOAD';
+export const UP = 'UP';
+export const DOWN = 'DOWN';
+export const SELECT = 'SELECT';
 
 const gamepadButtonMappings = {};
 gamepadButtonMappings[FIRE] = Phaser.Gamepad.XBOX360_RIGHT_BUMPER;
 gamepadButtonMappings[DASH] = Phaser.Gamepad.XBOX360_LEFT_BUMPER;
 gamepadButtonMappings[RELOAD] = Phaser.Gamepad.XBOX360_RIGHT_TRIGGER;
+gamepadButtonMappings[UP] = Phaser.Gamepad.XBOX360_DPAD_UP;
+gamepadButtonMappings[DOWN] = Phaser.Gamepad.XBOX360_DPAD_DOWN;
+gamepadButtonMappings[SELECT] = [
+    Phaser.Gamepad.XBOX360_RIGHT_BUMPER,
+    Phaser.Gamepad.XBOX360_A
+];
 
 class Controls
 {
@@ -81,6 +90,12 @@ class Controls
     getRightStickAngle(player)
     {
         return this._getStickAngle('right', player);
+    }
+
+    reset()
+    {
+        this.onDownMappings = [{}, {}, {}, {}];
+        this.onUpMappings = [{}, {}, {}, {}];
     }
 
     _getStickAngle(propertyPrefix, player) {

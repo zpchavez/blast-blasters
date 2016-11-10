@@ -1,4 +1,4 @@
-import GameState from './states/game-state';
+import MainMenuState from './states/main-menu-state';
 
 var game = new Phaser.Game(
     1280,
@@ -8,4 +8,4 @@ var game = new Phaser.Game(
     null
 );
 
-game.state.add('game', new GameState, true);
+game.state.add('game', new MainMenuState, true);
