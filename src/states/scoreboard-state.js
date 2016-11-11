@@ -4,6 +4,7 @@ import MainMenuState from './main-menu-state';
 import globalState from '../util/global-state';
 import colors from '../data/colors';
 import leftpad from '../util/leftpad';
+import score from '../util/score';
 
 class ScoreboardState extends AbstractState
 {
@@ -17,7 +18,7 @@ class ScoreboardState extends AbstractState
     {
         super.create();
 
-        const winningPlayers = this.getWinningPlayers();
+        const winningPlayers = score.getWinningPlayers();
 
         if (winningPlayers.length === 1) {
             this.renderWinner(winningPlayers[0]);
@@ -27,7 +28,7 @@ class ScoreboardState extends AbstractState
             this.renderScore();
             if (winningPlayers.length > 1) {
                 // It's a tie. The non-winning players are eliminated.
-                globalState.set('eliminatedPlayers', this.getNonWinningPlayers());
+                globalState.set('eliminatedPlayers', score.getNonWinningPlayers());
             }
             setTimeout(this.loadNextRound.bind(this), 3000);
         }
@@ -124,51 +125,6 @@ class ScoreboardState extends AbstractState
                 }
             );
         });
-    }
-
-    /**
-     * Get array of players who have met the number of points
-     * required to win and who have more points than any other
-     * players
-     */
-    getWinningPlayers()
-    {
-        const scoreToPlayers = {};
-
-        globalState.get('score').forEach((score, player) => {
-            if (! scoreToPlayers[score]) {
-                scoreToPlayers[score] = [];
-            }
-            scoreToPlayers[score].push(player);
-        });
-
-        const sortedScores = globalState.get('score').sort((a, b) => a < b);
-        let winningPlayers = null;
-        sortedScores.forEach(score => {
-            if (winningPlayers === null && score >= this.getWinningScore()) {
-                winningPlayers = scoreToPlayers[score];
-            }
-        });
-
-        return winningPlayers;
-    }
-
-    getWinningScore()
-    {
-        return globalState.get('players') * 5;
-    }
-
-    getNonWinningPlayers()
-    {
-        const nonWinningPlayers = [];
-        const winningPlayers = this.getWinningPlayers();
-        globalState.get('score').forEach((score, player) => {
-            if (winningPlayers.indexOf(player) === -1) {
-                nonWinningPlayers.push(player);
-            }
-        });
-
-        return nonWinningPlayers;
     }
 
     loadNextRound()
