@@ -17,7 +17,7 @@ export default {
             scoreToPlayers[score].push(player);
         });
 
-        const sortedScores = globalState.get('score').sort((a, b) => a < b);
+        const sortedScores = this.getSortedScores();
         let winningPlayers = [];
         sortedScores.forEach(score => {
             if (winningPlayers.length === 0 && score >= this.getWinningScore()) {
@@ -26,6 +26,14 @@ export default {
         });
 
         return winningPlayers;
+    },
+
+    /**
+     * Return scores sorted highest to lowers
+     */
+    getSortedScores()
+    {
+        return globalState.get('score').sort((a, b) => a < b);
     },
 
     getNonWinningPlayers()
@@ -39,6 +47,36 @@ export default {
         });
 
         return nonWinningPlayers;
+    },
+
+    getLead()
+    {
+        const sortedScores = this.getSortedScores();
+        return sortedScores[0] - sortedScores[1];
+    },
+
+    getLeadingPlayer()
+    {
+        const lead = this.getLead();
+        if (lead === 0) {
+            return null;
+        }
+
+        const sortedScores = this.getSortedScores();
+        return globalState.get('score').indexOf(sortedScores[0]);
+    },
+
+    getNonLeadingPlayers()
+    {
+        const nonLeadingPlayers = [];
+        const leadingPlayer = this.getLeadingPlayer();
+        globalState.get('score').forEach((score, player) => {
+            if (leadingPlayer !== player) {
+                nonLeadingPlayers.push(player);
+            }
+        });
+
+        return nonLeadingPlayers;
     },
 
     getWinningScore()

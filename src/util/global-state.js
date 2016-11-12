@@ -1,3 +1,5 @@
+import colors from '../data/colors';
+
 const initialState = Object.assign(
     {
         colors: [0, 1, 2, 3],
@@ -32,5 +34,9 @@ export default {
         this.state.score = new Array(this.state.players).fill(0);
 
         return this;
+    },
+
+    getPlayerColorInfo: function(player) {
+        return colors[this.state.colors[player]];
     }
 }

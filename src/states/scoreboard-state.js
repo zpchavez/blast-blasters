@@ -1,5 +1,5 @@
 import AbstractState from './abstract-state';
-import GameState from './game-state';
+import ModificationState from './modification-state';
 import MainMenuState from './main-menu-state';
 import globalState from '../util/global-state';
 import colors from '../data/colors';
@@ -129,7 +129,7 @@ class ScoreboardState extends AbstractState
 
     loadNextRound()
     {
-        this.game.state.add('game', new GameState(), true);
+        this.game.state.add('game', new ModificationState(), true);
     }
 
     returnToMainMenu()
