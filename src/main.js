@@ -10,6 +10,6 @@ var game = new Phaser.Game(
     null
 );
 
-globalState.setInitialScore(4);
+globalState.set('players', 4);
 globalState.state.score[0] = 5;
 game.state.add('game', new ModificationState, true);

@@ -38,10 +38,6 @@ class GameState extends AbstractState
 
         this.numPlayers = globalState.get('players');
 
-        if (! globalState.get('score')) {
-            globalState.setInitialScore(this.numPlayers);
-        }
-
         this.initPhysics();
         this.initMap();
         this.initPlayers();
@@ -58,10 +54,6 @@ class GameState extends AbstractState
                 player.aim(this.controls.getRightStickAngle(playerNumber));
             }
         });
-
-        if (this.playerHasEnoughKillsToWinTheGame()) {
-            this.endRound();
-        }
 
         let remainingPlayers = this.players.filter(player => player.game !== null).length;
         if (remainingPlayers <= 1) {
@@ -145,19 +137,6 @@ class GameState extends AbstractState
             const point = spawnPoints.splice(pointIndex, 1)[0];
             player.reset(point.x + 16, point.y + 16);
         });
-    }
-
-    playerHasEnoughKillsToWinTheGame()
-    {
-        let playerHasWon = false;
-
-        globalState.get('score').forEach(score => {
-            if (score >= 4) {
-                playerHasWon = true;
-            }
-        });
-
-        return playerHasWon;
     }
 
     endRound()

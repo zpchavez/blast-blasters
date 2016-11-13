@@ -127,7 +127,12 @@ class ModificationState extends AbstractState
             this.modChoiceTextObjects[this.selectedMod].fill = '#00FFFF';
             this.renderCursor();
         } else {
-
+            const nonLeadingPlayers = score.getNonLeadingPlayers();
+            globalState.addMod(
+                nonLeadingPlayers[this.selectedPlayer],
+                this.modChoices[this.selectedMod]
+            );
+            this.game.state.add('game', new GameState(), true);
         }
     }
 
