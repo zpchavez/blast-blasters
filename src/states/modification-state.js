@@ -25,12 +25,10 @@ class ModificationState extends AbstractState
     create()
     {
         if (score.getLead() > MOD_LEAD_THRESHOLD) {
-            this.showModSelection();
+            this.renderModSelection();
         } else {
             this.game.state.add('game', new GameState(), true);
         }
-
-        this.cursorSection = CURSOR_SECTION_MODS;
 
         this.initInputs();
     }
@@ -67,14 +65,16 @@ class ModificationState extends AbstractState
         return modChoices;
     }
 
-    showModSelection()
+    renderModSelection()
     {
-        this.showHeading();
-        this.showModChoices();
-        this.showPlayers();
+        this.renderHeading();
+        this.renderModChoices();
+        this.renderModDescription();
+        this.renderPlayers();
+        this.renderCursor();
     }
 
-    showHeading()
+    renderHeading()
     {
         const leadingPlayer = score.getLeadingPlayer();
         const leadingColor = globalState.getPlayerColorInfo(leadingPlayer);
@@ -92,15 +92,15 @@ class ModificationState extends AbstractState
         this.headingText.anchor.set(0.5);
     }
 
-    showModChoices()
+    renderModChoices()
     {
-        const modChoices = this.getModChoices();
+        this.modChoices = this.getModChoices();
         const options = { fill: '#ffffff' };
 
-        console.log('modChoices', modChoices);
+        this.selectedMod = 0;
 
         this.modChoiceTextObjects = [];
-        modChoices.forEach((key, index) => {
+        this.modChoices.forEach((key, index) => {
             this.modChoiceTextObjects.push(
                 this.game.add.text(
                     (this.game.width / 2) - 100,
@@ -112,17 +112,21 @@ class ModificationState extends AbstractState
         });
     }
 
-    showPlayers()
+    renderPlayers()
     {
         const nonLeadingPlayers = score.getNonLeadingPlayers();
 
+        this.selectedPlayer = 0;
+
+        this.playerSprites = [];
         nonLeadingPlayers.forEach((player, index) => {
             let playerSprite = this.game.make.sprite(
-                this.game.width / 2 - 300 + (250 * index),
+                this.game.width / 2 - 270 + (250 * index),
                 300,
                 'player'
             );
             playerSprite.tint = globalState.getPlayerColorInfo(player).hex
+            this.playerSprites.push(playerSprite);
             this.game.world.addChild(playerSprite);
         });
     }
@@ -130,7 +134,12 @@ class ModificationState extends AbstractState
     moveCursorUp()
     {
         if (this.cursorSection === CURSOR_SECTION_MODS) {
-
+            if (this.selectedMod === 0) {
+                this.selectedMod = this.modChoiceTextObjects.length - 1;
+            } else {
+                this.selectedMod -= 1;
+            }
+            this.renderModDescription();
         } else {
 
         }
@@ -140,7 +149,12 @@ class ModificationState extends AbstractState
     moveCursorDown()
     {
         if (this.cursorSection === CURSOR_SECTION_MODS) {
-
+            if (this.selectedMod === this.modChoiceTextObjects.length - 1) {
+                this.selectedMod = 0
+            } else {
+                this.selectedMod += 1;
+            }
+            this.renderModDescription();
         } else {
 
         }
@@ -150,9 +164,62 @@ class ModificationState extends AbstractState
     selectOption()
     {
         if (this.cursorSection === CURSOR_SECTION_MODS) {
-
+            this.cursorSection = CURSOR_SECTION_PLAYERS;
+            this.renderCursor();
         } else {
 
+        }
+    }
+
+    renderModDescription()
+    {
+        const mod = mods[this.modChoices[this.selectedMod]];
+
+        if (this.modDescriptionText) {
+            this.modDescriptionText.destroy();
+        }
+
+        this.modDescriptionText = this.game.add.text(
+            this.game.width / 2,
+            250,
+            mod.description,
+            { fill: '#ffffff' }
+        );
+        this.modDescriptionText.anchor.set(0.5);
+    }
+
+    renderCursor()
+    {
+        if (! this.cursorSection) {
+            this.cursorSection = CURSOR_SECTION_MODS;
+        }
+
+        if (this.cursor) {
+            this.cursor.destroy();
+        }
+
+        if (this.cursorSection === CURSOR_SECTION_MODS) {
+            const selectedText = this.modChoiceTextObjects[this.selectedMod];
+            this.cursor = this.game.add.text(
+                selectedText.x - 40,
+                selectedText.y,
+                '▶',
+                {
+                    fill: '#ffffff',
+                    font: '24px Arial'
+                }
+            );
+        } else {
+            const selectedPlayer = this.playerSprites[this.selectedPlayer];
+            this.cursor = this.game.add.text(
+                selectedPlayer.x + 4,
+                selectedPlayer.y - 30,
+                '▼',
+                {
+                    fill: '#ffffff',
+                    font: '24px Arial'
+                }
+            );
         }
     }
 }

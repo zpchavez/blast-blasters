@@ -29,19 +29,16 @@ export default {
     //     stackable: false,
     //     appearIfLeadingBy: 4,
     // },
-    // MOVING_RELOAD: {
-    //     name: 'Moving Reload',
-    //     description: 'Keep moving while reloading',
-    //     stackable: false,
-    //     appearIfLeadingBy: 3,
-    // },
-
     // Stackable
     AMMO_BLAMMO: {
         name: 'Ammo Blammo',
         description: 'More ammo',
         stackable: 3,
-        appearIfLeadingBy: 2,
+    },
+    FASTER_RELOAD: {
+        name: 'Faster Reload',
+        description: 'Reload faster!',
+        stackable: 3,
     },
     // FASTER_DASHER: {
     //     name: 'Faster Dasher',
