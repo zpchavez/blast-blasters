@@ -38,7 +38,7 @@ export default {
     addMod(player, modKey) {
         if (! this.state.mods[player][modKey]) {
             this.state.mods[player][modKey] = {
-                mod: modKey,
+                modKey,
                 level: 1
             };
         } else {

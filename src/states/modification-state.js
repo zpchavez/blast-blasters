@@ -199,15 +199,32 @@ class ModificationState extends AbstractState
         this.selectedPlayer = 0;
 
         this.playerSprites = [];
-        nonLeadingPlayers.forEach((player, index) => {
+        nonLeadingPlayers.forEach((player, playerIndex) => {
             let playerSprite = this.game.make.sprite(
-                this.game.width / 2 - 270 + (250 * index),
+                this.game.width / 2 - 270 + (250 * playerIndex),
                 300,
                 'player'
             );
             playerSprite.tint = globalState.getPlayerColorInfo(player).hex
             this.playerSprites.push(playerSprite);
             this.game.world.addChild(playerSprite);
+
+            Object.keys(globalState.get('mods')[player]).forEach((modKey, modIndex) => {
+                let mod = globalState.get('mods')[player][modKey];
+                let modLabel = mods[modKey].name;
+                if (mod.level > 1) {
+                    modLabel += ' ' + (new Array(mod.level - 1).fill('☆')).join('')
+                }
+                this.game.add.text(
+                    this.game.width / 2 - 300 + (250 * playerIndex),
+                    320 + ((modIndex + 1) * 30),
+                    modLabel,
+                    {
+                        fill: '#ffffff',
+                        font: '20px Arial',
+                    }
+                );
+            });
         });
     }
 
