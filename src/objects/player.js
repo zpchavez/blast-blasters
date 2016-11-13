@@ -76,8 +76,22 @@ class Player extends AbstractObject
         this.aimAngle = angle;
     }
 
+    stopAutoFire()
+    {
+        if (this.autoFireTimer) {
+            this.autoFireTimer.destroy();
+            this.autoFireTimer = null;
+        }
+    }
+
     fire()
     {
+        if (! this.autoFireTimer && globalState.getMod(this.playerNum, 'AUTO_BLASTER')) {
+            this.autoFireTimer = this.game.time.create();
+            this.autoFireTimer.loop(100, this.fire, this);
+            this.autoFireTimer.start();
+        }
+
         if (this.game === null || this.reloading || this.aimAngle === null) {
             return;
         }

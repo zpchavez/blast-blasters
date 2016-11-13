@@ -55,6 +55,9 @@ export default {
         for (let i = 0; i < players; i += 1) {
             this.state.mods[i] = {};
         }
+        this.state.mods[1] = {
+            FASTER_BLASTER: { level: 1 }
+        };
 
         return this;
     },
