@@ -37,9 +37,7 @@ class Blast extends AbstractObject
         this.body.damping = 0;
 
         this.body.onBeginContact.add(function (contactingBody) {
-            if (Player.prototype.isPrototypeOf(contactingBody.sprite) &&
-                contactingBody.sprite.playerNum !== this.shotBy
-            ) {
+            if (Player.prototype.isPrototypeOf(contactingBody.sprite)) {
                 contactingBody.sprite.getHit(this.shotBy);
                 this.destroy();
             } else if (! Player.prototype.isPrototypeOf(contactingBody.sprite)) {

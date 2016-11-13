@@ -162,7 +162,11 @@ class Player extends AbstractObject
 
     getHit(hitBy)
     {
-        globalState.state.score[hitBy] += 1;
+        if (hitBy === this.playerNum && globalState.state.score[this.playerNum] > 0) {
+            globalState.state.score[hitBy] -= 1;
+        } else {
+            globalState.state.score[hitBy] += 1;
+        }
         this.getHitCallback(hitBy);
         this.destroy();
     }
