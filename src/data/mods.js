@@ -14,4 +14,9 @@ export default {
         description: 'Reload faster!',
         maxLevel: 3,
     },
+    DASH_RECOVERY: {
+        name: `Dash Recovery`,
+        description: `Don't slow down as much. Dash again sooner.`,
+        maxLevel: 3,
+    }
 }

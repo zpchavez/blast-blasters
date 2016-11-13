@@ -137,6 +137,12 @@ class Player extends AbstractObject
             return;
         }
 
+        const dashRecoveryMod = globalState.getMod(this.playerNum, 'DASH_RECOVERY');
+        let bonusTime = 0;
+        if (dashRecoveryMod) {
+            bonusTime = 100 * dashRecoveryMod.level;
+        }
+
         this.dashState = 'DASHING';
         delay(
             () => {
@@ -149,14 +155,14 @@ class Player extends AbstractObject
             () => {
                 this.dashState = 'COOLDOWN';
             },
-            500
+            500 - bonusTime
         ))
         .then(delay.bind(
             this,
             () => {
                 this.dashState = 'READY';
             },
-            500
+            500 - bonusTime
         ));
     }
 
