@@ -8,4 +8,4 @@ var game = new Phaser.Game(
     null
 );
 
-game.state.add('game', new MainMenuState, true);
+game.state.add('game', new MainMenuState(), true);

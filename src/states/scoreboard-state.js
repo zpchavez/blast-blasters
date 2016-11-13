@@ -1,8 +1,10 @@
 import AbstractState from './abstract-state';
-import GameState from './game-state';
+import ModificationState from './modification-state';
+import MainMenuState from './main-menu-state';
 import globalState from '../util/global-state';
 import colors from '../data/colors';
 import leftpad from '../util/leftpad';
+import score from '../util/score';
 
 class ScoreboardState extends AbstractState
 {
@@ -16,9 +18,35 @@ class ScoreboardState extends AbstractState
     {
         super.create();
 
-        this.renderPlayerKills();
-        this.renderScore();
-        setTimeout(this.loadNextRound.bind(this), 3000);
+        const winningPlayers = score.getWinningPlayers();
+
+        if (winningPlayers.length === 1) {
+            this.renderWinner(winningPlayers[0]);
+            setTimeout(this.returnToMainMenu.bind(this), 3000);
+        } else {
+            this.renderPlayerKills();
+            this.renderScore();
+            if (winningPlayers.length > 1) {
+                // It's a tie. The non-winning players are eliminated.
+                globalState.set('eliminatedPlayers', score.getNonWinningPlayers());
+            }
+            setTimeout(this.loadNextRound.bind(this), 3000);
+        }
+    }
+
+    renderWinner(player)
+    {
+        const winnerColor = colors[player];
+        const winnerText = this.game.add.text(
+            this.game.width / 2,
+            this.game.height / 2 - 100,
+            winnerColor.name.toUpperCase() + ' WINS!',
+            {
+                font: '42px Arial',
+                fill: '#ffffff',
+            }
+        )
+        winnerText.anchor.set(0.5);
     }
 
     renderPlayerKills()
@@ -101,7 +129,13 @@ class ScoreboardState extends AbstractState
 
     loadNextRound()
     {
-        this.game.state.add('game', new GameState(), true);
+        this.game.state.add('game', new ModificationState(), true);
+    }
+
+    returnToMainMenu()
+    {
+        globalState.reset();
+        this.game.state.add('main-menu', new MainMenuState(), true);
     }
 }
 

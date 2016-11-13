@@ -38,10 +38,6 @@ class GameState extends AbstractState
 
         this.numPlayers = globalState.get('players');
 
-        if (! globalState.get('score')) {
-            globalState.setInitialScore(this.numPlayers);
-        }
-
         this.initPhysics();
         this.initMap();
         this.initPlayers();
@@ -74,8 +70,14 @@ class GameState extends AbstractState
     {
         this.game.physics.startSystem(Phaser.Physics.P2JS);
         this.collisionGroup = this.game.physics.p2.createCollisionGroup();
+        // Default contact material
         this.game.physics.p2.contactMaterial.restitution = 0; // No bouncing
         this.game.physics.p2.contactMaterial.friction = 100;
+        const bouncyMaterial = this.game.physics.p2.createMaterial('bouncy');
+        const bouncyContact = this.game.physics.p2.createContactMaterial(bouncyMaterial, bouncyMaterial);
+        bouncyContact.restitution = 1;
+        bouncyContact.friction = 0;
+        globalState.set('bouncyMaterial', bouncyMaterial);
     }
 
     initMap()
@@ -89,6 +91,8 @@ class GameState extends AbstractState
         bodies.forEach(body => {
             body.setCollisionGroup(this.collisionGroup)
             body.collides(this.collisionGroup);
+            body.isWall = true;
+            body.setMaterial(globalState.get('bouncyMaterial'));
         });
     }
 
@@ -99,6 +103,9 @@ class GameState extends AbstractState
         this.playerKills = [];
         for (let playerNumber = 0; playerNumber < this.numPlayers; playerNumber += 1) {
             this.playerKills.push([])
+            if (globalState.get('eliminatedPlayers').indexOf(playerNumber) !== -1) {
+                continue;
+            }
             this.players.push(Player.create(playerNumber, this.game));
             this.players[playerNumber].addToCollisionGroup(this.collisionGroup);
             this.players[playerNumber].setGetHitCallback(hitBy => {
@@ -114,6 +121,7 @@ class GameState extends AbstractState
         this.controls = new Controls(this.game);
         this.players.forEach((player, playerNumber) => {
             this.controls.onDown(playerNumber, FIRE, () => player.fire());
+            this.controls.onUp(playerNumber, FIRE, () => player.stopAutoFire());
             this.controls.onDown(playerNumber, DASH, () => player.dash());
             this.controls.onDown(playerNumber, RELOAD, () => player.reload());
         });

@@ -1,21 +1,22 @@
 import { rotateVector } from '../util/math';
 import AbstractObject from './abstract-object';
-import Projectile from './projectile';
+import Blast from './blast';
 import globalState from '../util/global-state';
 import colors from '../data/colors';
 import delay from '../util/delay'
 
 class Player extends AbstractObject
 {
-    constructor(game, x, y, key, frame)
+    constructor(game, x, y, key, frame, playerNum)
     {
         super(game, x, y, key, frame);
 
+        this.playerNum = playerNum;
         this.state = game.state;
         this.initPhysics();
         this.aimAngle = null;
         this.dashState = 'READY';
-        this.maxAmmo = 10;
+        this.maxAmmo = this.getMaxAmmo();
         this.ammo = this.maxAmmo;
 
         this.cannonSprite = this.addChild(
@@ -75,8 +76,22 @@ class Player extends AbstractObject
         this.aimAngle = angle;
     }
 
+    stopAutoFire()
+    {
+        if (this.autoFireTimer) {
+            this.autoFireTimer.destroy();
+            this.autoFireTimer = null;
+        }
+    }
+
     fire()
     {
+        if (! this.autoFireTimer && globalState.getMod(this.playerNum, 'AUTO_BLASTER')) {
+            this.autoFireTimer = this.game.time.create();
+            this.autoFireTimer.loop(100, this.fire, this);
+            this.autoFireTimer.start();
+        }
+
         if (this.game === null || this.reloading || this.aimAngle === null) {
             return;
         }
@@ -89,22 +104,24 @@ class Player extends AbstractObject
 
         this.ammo -= 1;
 
-        let xRotation = Math.cos(this.aimAngle - (Math.PI / 180));
-        let yRotation = Math.sin(this.aimAngle - (Math.PI / 180));
+        let xRotation = Math.cos(this.aimAngle - (90 * Math.PI / 180));
+        let yRotation = Math.sin(this.aimAngle - (90 * Math.PI / 180));
         let spawnPoint = [
-            this.x + (xRotation),
-            this.y + (yRotation),
+            this.x + (32 * xRotation),
+            this.y + (32 * yRotation),
         ];
 
-        let projectile = Projectile.create(this.state.game, spawnPoint[0], spawnPoint[1]);
-        projectile.tint = colors[globalState.get('colors')[this.playerNum]].hex;
-        projectile.addToCollisionGroup(this.collisionGroup);
-        this.game.world.addChild(projectile);
+        const blast = Blast.create(this.state.game, spawnPoint[0], spawnPoint[1]);
+        const bounceMod = globalState.getMod(this.playerNum, 'BLAST_BOUNCE');
+        blast.setBounces(bounceMod ? bounceMod.level : 0);
+        blast.tint = colors[globalState.get('colors')[this.playerNum]].hex;
+        blast.addToCollisionGroup(this.collisionGroup);
+        this.game.world.addChild(blast);
 
-        let velocity = rotateVector(this.aimAngle, [0, this.getProjectileVelocity() * -1]);
-        projectile.body.velocity.x = velocity[0];
-        projectile.body.velocity.y = velocity[1];
-        projectile.shotBy = this.playerNum;
+        const velocity = rotateVector(this.aimAngle, [0, this.getBlastVelocity() * -1]);
+        blast.body.velocity.x = velocity[0];
+        blast.body.velocity.y = velocity[1];
+        blast.shotBy = this.playerNum;
 
         if (this.ammo < 1) {
             this.cannonSprite.visible = false;
@@ -134,6 +151,12 @@ class Player extends AbstractObject
             return;
         }
 
+        const dashRecoveryMod = globalState.getMod(this.playerNum, 'DASH_RECOVERY');
+        let bonusTime = 0;
+        if (dashRecoveryMod) {
+            bonusTime = 100 * dashRecoveryMod.level;
+        }
+
         this.dashState = 'DASHING';
         delay(
             () => {
@@ -146,20 +169,24 @@ class Player extends AbstractObject
             () => {
                 this.dashState = 'COOLDOWN';
             },
-            500
+            500 - bonusTime
         ))
         .then(delay.bind(
             this,
             () => {
                 this.dashState = 'READY';
             },
-            500
+            500 - bonusTime
         ));
     }
 
     getHit(hitBy)
     {
-        globalState.state.score[hitBy] += 1;
+        if (hitBy === this.playerNum && globalState.state.score[this.playerNum] > 0) {
+            globalState.state.score[hitBy] -= 1;
+        } else {
+            globalState.state.score[hitBy] += 1;
+        }
         this.getHitCallback(hitBy);
         this.destroy();
     }
@@ -169,12 +196,27 @@ class Player extends AbstractObject
         this.getHitCallback = callback;
     }
 
-    getReloadDelay()
+    getMaxAmmo()
     {
-        return 1000;
+        let extraAmmo = 0;
+        const ammoMod = globalState.getMod(this.playerNum, 'AMMO_BLAMMO');
+        if (ammoMod) {
+            extraAmmo = 10 * ammoMod.level;
+        }
+        return 10 + extraAmmo;
     }
 
-    getProjectileVelocity()
+    getReloadDelay()
+    {
+        const fasterReloadMod = globalState.getMod(this.playerNum, 'FASTER_RELOAD');
+        let reloadTimeSavings = 0;
+        if (fasterReloadMod) {
+            reloadTimeSavings = fasterReloadMod.level * 300;
+        }
+        return 1000 - reloadTimeSavings;
+    }
+
+    getBlastVelocity()
     {
         return 800;
     }
@@ -208,8 +250,7 @@ class Player extends AbstractObject
 }
 
 Player.create = (playerNum, game, x, y) => {
-    var player = new Player(game, x, y, 'player');
-    player.playerNum = playerNum;
+    var player = new Player(game, x, y, 'player', 0, playerNum);
     player.tint = colors[globalState.get('colors')[playerNum]].hex;
     return player;
 };
@@ -218,7 +259,7 @@ Player.loadAssets = (state) => {
     state.load.image('player', 'assets/img/player.png');
     state.load.image('player-out-of-ammo', 'assets/img/player-out-of-ammo.png');
     state.load.image('player-reloading', 'assets/img/player-reloading.png');
-    state.load.image('projectile', 'assets/img/basic-projectile.png');
+    state.load.image('blast', 'assets/img/blast.png');
     state.load.image('cannon', 'assets/img/cannon.png');
 };
 
