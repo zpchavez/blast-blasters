@@ -7,15 +7,16 @@ import delay from '../util/delay'
 
 class Player extends AbstractObject
 {
-    constructor(game, x, y, key, frame)
+    constructor(game, x, y, key, frame, playerNum)
     {
         super(game, x, y, key, frame);
 
+        this.playerNum = playerNum;
         this.state = game.state;
         this.initPhysics();
         this.aimAngle = null;
         this.dashState = 'READY';
-        this.maxAmmo = 10;
+        this.maxAmmo = this.getMaxAmmo();
         this.ammo = this.maxAmmo;
 
         this.cannonSprite = this.addChild(
@@ -169,6 +170,16 @@ class Player extends AbstractObject
         this.getHitCallback = callback;
     }
 
+    getMaxAmmo()
+    {
+        let extraAmmo = 0;
+        let ammoMod = globalState.getMod(this.playerNum, 'AMMO_BLAMMO');
+        if (ammoMod) {
+            extraAmmo = 10 * ammoMod.level;
+        }
+        return 10 + extraAmmo;
+    }
+
     getReloadDelay()
     {
         return 1000;
@@ -208,8 +219,7 @@ class Player extends AbstractObject
 }
 
 Player.create = (playerNum, game, x, y) => {
-    var player = new Player(game, x, y, 'player');
-    player.playerNum = playerNum;
+    var player = new Player(game, x, y, 'player', 0, playerNum);
     player.tint = colors[globalState.get('colors')[playerNum]].hex;
     return player;
 };

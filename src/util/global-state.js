@@ -36,13 +36,24 @@ export default {
     },
 
     addMod(player, modKey) {
-        this.state.mods[player].push(modKey);
+        if (! this.state.mods[player][modKey]) {
+            this.state.mods[player][modKey] = {
+                mod: modKey,
+                level: 1
+            };
+        } else {
+            this.state.mods[player][modKey].level += 1;
+        }
+    },
+
+    getMod(player, modKey) {
+        return this.state.mods[player][modKey] || null;
     },
 
     _initializeForNumberOfPlayers: function(players) {
         this.state.score = new Array(players).fill(0);
         for (let i = 0; i < players; i += 1) {
-            this.state.mods[i] = [];
+            this.state.mods[i] = {};
         }
 
         return this;
