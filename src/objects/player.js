@@ -179,7 +179,7 @@ class Player extends AbstractObject
     getMaxAmmo()
     {
         let extraAmmo = 0;
-        let ammoMod = globalState.getMod(this.playerNum, 'AMMO_BLAMMO');
+        const ammoMod = globalState.getMod(this.playerNum, 'AMMO_BLAMMO');
         if (ammoMod) {
             extraAmmo = 10 * ammoMod.level;
         }
@@ -188,7 +188,12 @@ class Player extends AbstractObject
 
     getReloadDelay()
     {
-        return 1000;
+        const fasterReloadMod = globalState.getMod(this.playerNum, 'FASTER_RELOAD');
+        let reloadTimeSavings = 0;
+        if (fasterReloadMod) {
+            reloadTimeSavings = fasterReloadMod.level * 300;
+        }
+        return 1000 - reloadTimeSavings;
     }
 
     getBlastVelocity()
