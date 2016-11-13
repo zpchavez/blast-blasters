@@ -93,8 +93,8 @@ class Player extends AbstractObject
         let xRotation = Math.cos(this.aimAngle - (90 * Math.PI / 180));
         let yRotation = Math.sin(this.aimAngle - (90 * Math.PI / 180));
         let spawnPoint = [
-            this.x + (24 * xRotation),
-            this.y + (24 * yRotation),
+            this.x + (32 * xRotation),
+            this.y + (32 * yRotation),
         ];
 
         const blast = Blast.create(this.state.game, spawnPoint[0], spawnPoint[1]);
