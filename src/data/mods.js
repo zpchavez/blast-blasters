@@ -1,8 +1,8 @@
 export default {
     // One-time
-    RICOCHET: {
-        name: 'Ricochet',
-        description: 'Shots bounce off walls',
+    BLAST_BOUNCE: {
+        name: 'Blast Bounce',
+        description: 'Blasts bounce off walls',
         maxLevel: 1,
     },
     // RAPID_FIRE: {
