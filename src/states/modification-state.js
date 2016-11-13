@@ -57,15 +57,40 @@ class ModificationState extends AbstractState
         const allMods = Object.keys(mods);
         const modChoices = [];
 
-        for (let i = 0; i < MOD_CHOICES_COUNT; i += 1) {
+        while (allMods.length > 0 && modChoices.length < MOD_CHOICES_COUNT) {
             if (allMods.length < 1) {
                 break;
             }
             let modIndex = rng.between(0, allMods.length - 1);
-            modChoices.push(allMods.splice(modIndex, 1)[0]);
+            let pickedMod = allMods.splice(modIndex, 1)[0];
+            let canAddModToAtLeastOnePlayer = false;
+            score.getNonLeadingPlayers().forEach(player => {
+                if (this.canAddModToPlayer(pickedMod, player)) {
+                    canAddModToAtLeastOnePlayer = true;
+                }
+            });
+            if (canAddModToAtLeastOnePlayer) {
+                modChoices.push(pickedMod);
+            }
         }
 
         return modChoices;
+    }
+
+    canAddModToPlayer(modKey, player)
+    {
+        return (
+            ! globalState.getMod(player, modKey) ||
+            globalState.getMod(player, modKey).level < mods[modKey].maxLevel
+        );
+    }
+
+    canAddSelectedModToSelectedPlayer()
+    {
+        return this.canAddModToPlayer(
+            this.modChoices[this.selectedMod],
+            score.getNonLeadingPlayers()[this.selectedPlayer]
+        );
     }
 
     moveCursorUp()
@@ -127,12 +152,14 @@ class ModificationState extends AbstractState
             this.modChoiceTextObjects[this.selectedMod].fill = '#00FFFF';
             this.renderCursor();
         } else {
-            const nonLeadingPlayers = score.getNonLeadingPlayers();
-            globalState.addMod(
-                nonLeadingPlayers[this.selectedPlayer],
-                this.modChoices[this.selectedMod]
-            );
-            this.game.state.add('game', new GameState(), true);
+            if (this.canAddSelectedModToSelectedPlayer()) {
+                const nonLeadingPlayers = score.getNonLeadingPlayers();
+                globalState.addMod(
+                    nonLeadingPlayers[this.selectedPlayer],
+                    this.modChoices[this.selectedMod]
+                );
+                this.game.state.add('game', new GameState(), true);
+            }
         }
     }
 
@@ -268,12 +295,15 @@ class ModificationState extends AbstractState
             );
         } else {
             const selectedPlayer = this.playerSprites[this.selectedPlayer];
+
+            const fill = this.canAddSelectedModToSelectedPlayer() ? '#ffffff' : '#ff0000'
+
             this.cursor = this.game.add.text(
                 selectedPlayer.x + 4,
                 selectedPlayer.y - 30,
                 '▼',
                 {
-                    fill: '#ffffff',
+                    fill,
                     font: '24px Arial'
                 }
             );
