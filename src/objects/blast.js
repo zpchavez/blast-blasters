@@ -1,5 +1,6 @@
 import AbstractObject from './abstract-object'
 import Player from './player';
+import globalState from '../util/global-state';
 
 class Blast extends AbstractObject
 {
@@ -9,6 +10,11 @@ class Blast extends AbstractObject
 
         this.state = game.state;
         this.initPhysics(this.state);
+    }
+
+    setBounces(count)
+    {
+        this.bounces = count;
     }
 
     update()
@@ -24,11 +30,11 @@ class Blast extends AbstractObject
     {
         this.state.game.physics.p2.enable(this);
 
-        this.body.damping = 0;
+        this.body.setMaterial(globalState.get('bouncyMaterial'));
 
-        this.body.data.shapes.forEach(shape => {
-            shape.sensor = true;
-        });
+        this.body.dynamic = true;
+
+        this.body.damping = 0;
 
         this.body.onBeginContact.add(function (contactingBody) {
             if (Player.prototype.isPrototypeOf(contactingBody.sprite) &&
@@ -37,7 +43,11 @@ class Blast extends AbstractObject
                 contactingBody.sprite.getHit(this.shotBy);
                 this.destroy();
             } else if (! Player.prototype.isPrototypeOf(contactingBody.sprite)) {
-                this.destroy();
+                if (contactingBody.isWall && this.bounces) {
+                    this.bounces -= 1;
+                } else {
+                    this.destroy();
+                }
             }
         }, this);
     }

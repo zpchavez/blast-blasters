@@ -70,8 +70,14 @@ class GameState extends AbstractState
     {
         this.game.physics.startSystem(Phaser.Physics.P2JS);
         this.collisionGroup = this.game.physics.p2.createCollisionGroup();
+        // Default contact material
         this.game.physics.p2.contactMaterial.restitution = 0; // No bouncing
         this.game.physics.p2.contactMaterial.friction = 100;
+        const bouncyMaterial = this.game.physics.p2.createMaterial('bouncy');
+        const bouncyContact = this.game.physics.p2.createContactMaterial(bouncyMaterial, bouncyMaterial);
+        bouncyContact.restitution = 1;
+        bouncyContact.friction = 0;
+        globalState.set('bouncyMaterial', bouncyMaterial);
     }
 
     initMap()
@@ -85,6 +91,8 @@ class GameState extends AbstractState
         bodies.forEach(body => {
             body.setCollisionGroup(this.collisionGroup)
             body.collides(this.collisionGroup);
+            body.isWall = true;
+            body.setMaterial(globalState.get('bouncyMaterial'));
         });
     }
 

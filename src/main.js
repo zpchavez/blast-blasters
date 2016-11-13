@@ -12,6 +12,11 @@ var game = new Phaser.Game(
 
 globalState.set('players', 4);
 globalState.state.score[0] = 5;
+globalState.state.mods[0] = {
+    BLAST_BOUNCE: {
+        level: 1,
+    },
+};
 globalState.state.mods[1] = {
     AMMO_BLAMMO: {
         level: 3,
