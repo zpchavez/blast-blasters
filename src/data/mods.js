@@ -32,7 +32,7 @@ export default {
     // Stackable
     AMMO_BLAMMO: {
         name: 'Ammo Blammo',
-        description: 'More ammo',
+        description: 'Longer lasting consecutive blasting',
         maxLevel: 3,
     },
     FASTER_RELOAD: {
