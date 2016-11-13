@@ -46,7 +46,10 @@ class ModificationState extends AbstractState
 
         this.controls.onDown(leadingPlayer, 'UP', this.moveCursorUp.bind(this));
         this.controls.onDown(leadingPlayer, 'DOWN', this.moveCursorDown.bind(this));
+        this.controls.onDown(leadingPlayer, 'LEFT', this.moveCursorLeft.bind(this));
+        this.controls.onDown(leadingPlayer, 'RIGHT', this.moveCursorRight.bind(this));
         this.controls.onDown(leadingPlayer, 'SELECT', this.selectOption.bind(this));
+        this.controls.onDown(leadingPlayer, 'CANCEL', this.cancelSelection.bind(this));
     }
 
     getModChoices()
@@ -63,6 +66,78 @@ class ModificationState extends AbstractState
         }
 
         return modChoices;
+    }
+
+    moveCursorUp()
+    {
+        if (this.cursorSection === CURSOR_SECTION_MODS) {
+            if (this.selectedMod === 0) {
+                this.selectedMod = this.modChoiceTextObjects.length - 1;
+            } else {
+                this.selectedMod -= 1;
+            }
+            this.renderModDescription();
+            this.renderCursor();
+        }
+    }
+
+    moveCursorDown()
+    {
+        if (this.cursorSection === CURSOR_SECTION_MODS) {
+            if (this.selectedMod === this.modChoiceTextObjects.length - 1) {
+                this.selectedMod = 0
+            } else {
+                this.selectedMod += 1;
+            }
+            this.renderModDescription();
+            this.renderCursor();
+        }
+    }
+
+    moveCursorLeft()
+    {
+        const nonLeadingPlayers = score.getNonLeadingPlayers();
+        if (this.cursorSection === CURSOR_SECTION_PLAYERS) {
+            if (this.selectedPlayer === 0) {
+                this.selectedPlayer = nonLeadingPlayers.length - 1;
+            } else {
+                this.selectedPlayer -= 1;
+            }
+            this.renderCursor();
+        }
+    }
+
+    moveCursorRight()
+    {
+        const nonLeadingPlayers = score.getNonLeadingPlayers();
+        if (this.cursorSection === CURSOR_SECTION_PLAYERS) {
+            if (this.selectedPlayer === nonLeadingPlayers.length - 1) {
+                this.selectedPlayer = 0;
+            } else {
+                this.selectedPlayer += 1;
+            }
+            this.renderCursor();
+        }
+    }
+
+    selectOption()
+    {
+        if (this.cursorSection === CURSOR_SECTION_MODS) {
+            this.cursorSection = CURSOR_SECTION_PLAYERS;
+            this.modChoiceTextObjects[this.selectedMod].fill = '#00FFFF';
+            this.renderCursor();
+        } else {
+
+        }
+    }
+
+    cancelSelection()
+    {
+        if (this.cursorSection === CURSOR_SECTION_PLAYERS) {
+            this.cursorSection = CURSOR_SECTION_MODS;
+            this.modChoiceTextObjects[this.selectedMod].fill = '#FFFFFF';
+            this.renderCursor();
+        }
     }
 
     renderModSelection()
@@ -129,46 +204,6 @@ class ModificationState extends AbstractState
             this.playerSprites.push(playerSprite);
             this.game.world.addChild(playerSprite);
         });
-    }
-
-    moveCursorUp()
-    {
-        if (this.cursorSection === CURSOR_SECTION_MODS) {
-            if (this.selectedMod === 0) {
-                this.selectedMod = this.modChoiceTextObjects.length - 1;
-            } else {
-                this.selectedMod -= 1;
-            }
-            this.renderModDescription();
-        } else {
-
-        }
-        this.renderCursor();
-    }
-
-    moveCursorDown()
-    {
-        if (this.cursorSection === CURSOR_SECTION_MODS) {
-            if (this.selectedMod === this.modChoiceTextObjects.length - 1) {
-                this.selectedMod = 0
-            } else {
-                this.selectedMod += 1;
-            }
-            this.renderModDescription();
-        } else {
-
-        }
-        this.renderCursor();
-    }
-
-    selectOption()
-    {
-        if (this.cursorSection === CURSOR_SECTION_MODS) {
-            this.cursorSection = CURSOR_SECTION_PLAYERS;
-            this.renderCursor();
-        } else {
-
-        }
     }
 
     renderModDescription()

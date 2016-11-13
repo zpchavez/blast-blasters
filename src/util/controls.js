@@ -5,7 +5,10 @@ export const DASH = 'DASH';
 export const RELOAD = 'RELOAD';
 export const UP = 'UP';
 export const DOWN = 'DOWN';
+export const LEFT = 'LEFT';
+export const RIGHT = 'RIGHT';
 export const SELECT = 'SELECT';
+export const CANCEL = 'CANCEL';
 
 const gamepadButtonMappings = {};
 gamepadButtonMappings[FIRE] = Phaser.Gamepad.XBOX360_RIGHT_BUMPER;
@@ -13,10 +16,13 @@ gamepadButtonMappings[DASH] = Phaser.Gamepad.XBOX360_LEFT_BUMPER;
 gamepadButtonMappings[RELOAD] = Phaser.Gamepad.XBOX360_RIGHT_TRIGGER;
 gamepadButtonMappings[UP] = Phaser.Gamepad.XBOX360_DPAD_UP;
 gamepadButtonMappings[DOWN] = Phaser.Gamepad.XBOX360_DPAD_DOWN;
+gamepadButtonMappings[LEFT] = Phaser.Gamepad.XBOX360_DPAD_LEFT;
+gamepadButtonMappings[RIGHT] = Phaser.Gamepad.XBOX360_DPAD_RIGHT;
 gamepadButtonMappings[SELECT] = [
     Phaser.Gamepad.XBOX360_RIGHT_BUMPER,
     Phaser.Gamepad.XBOX360_A
 ];
+gamepadButtonMappings[CANCEL] = Phaser.Gamepad.XBOX360_B;
 
 class Controls
 {
@@ -134,9 +140,17 @@ class Controls
     {
         return (pad, button, value) => {
             if (button === Phaser.Gamepad.XBOX360_STICK_LEFT_X) {
+                // Allow left stick to be used to trigger onDown for LEFT, RIGHT
+                if (this.leftStickX[player] === 0) {
+                    if (value < 0 && this.onDownMappings[player][gamepadButtonMappings[LEFT]]) {
+                        this.onDownMappings[player][gamepadButtonMappings[LEFT]]();
+                    } else if (value > 0 && this.onDownMappings[player][gamepadButtonMappings[RIGHT]]) {
+                        this.onDownMappings[player][gamepadButtonMappings[RIGHT]]();
+                    }
+                }
                 this.leftStickX[player] = value;
             } else if (button === Phaser.Gamepad.XBOX360_STICK_LEFT_Y) {
-                // Allow left stick to be used to trigger onDown for UP and DOWN
+                // Allow left stick to be used to trigger onDown for UP, DOWN
                 if (this.leftStickY[player] === 0) {
                     if (value < 0 && this.onDownMappings[player][gamepadButtonMappings[UP]]) {
                         this.onDownMappings[player][gamepadButtonMappings[UP]]();
