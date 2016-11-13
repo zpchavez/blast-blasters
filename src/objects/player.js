@@ -1,6 +1,6 @@
 import { rotateVector } from '../util/math';
 import AbstractObject from './abstract-object';
-import Projectile from './projectile';
+import Blast from './blast';
 import globalState from '../util/global-state';
 import colors from '../data/colors';
 import delay from '../util/delay'
@@ -97,15 +97,15 @@ class Player extends AbstractObject
             this.y + (yRotation),
         ];
 
-        let projectile = Projectile.create(this.state.game, spawnPoint[0], spawnPoint[1]);
-        projectile.tint = colors[globalState.get('colors')[this.playerNum]].hex;
-        projectile.addToCollisionGroup(this.collisionGroup);
-        this.game.world.addChild(projectile);
+        let blast = Blast.create(this.state.game, spawnPoint[0], spawnPoint[1]);
+        blast.tint = colors[globalState.get('colors')[this.playerNum]].hex;
+        blast.addToCollisionGroup(this.collisionGroup);
+        this.game.world.addChild(blast);
 
-        let velocity = rotateVector(this.aimAngle, [0, this.getProjectileVelocity() * -1]);
-        projectile.body.velocity.x = velocity[0];
-        projectile.body.velocity.y = velocity[1];
-        projectile.shotBy = this.playerNum;
+        let velocity = rotateVector(this.aimAngle, [0, this.getBlastVelocity() * -1]);
+        blast.body.velocity.x = velocity[0];
+        blast.body.velocity.y = velocity[1];
+        blast.shotBy = this.playerNum;
 
         if (this.ammo < 1) {
             this.cannonSprite.visible = false;
@@ -185,7 +185,7 @@ class Player extends AbstractObject
         return 1000;
     }
 
-    getProjectileVelocity()
+    getBlastVelocity()
     {
         return 800;
     }
@@ -228,7 +228,7 @@ Player.loadAssets = (state) => {
     state.load.image('player', 'assets/img/player.png');
     state.load.image('player-out-of-ammo', 'assets/img/player-out-of-ammo.png');
     state.load.image('player-reloading', 'assets/img/player-reloading.png');
-    state.load.image('projectile', 'assets/img/basic-projectile.png');
+    state.load.image('blast', 'assets/img/blast.png');
     state.load.image('cannon', 'assets/img/cannon.png');
 };
 

@@ -1,7 +1,7 @@
 import AbstractObject from './abstract-object'
 import Player from './player';
 
-class Projectile extends AbstractObject
+class Blast extends AbstractObject
 {
     constructor(game, x, y, key, frame)
     {
@@ -43,8 +43,8 @@ class Projectile extends AbstractObject
     }
 }
 
-Projectile.create = (game, x, y) => {
-    return new Projectile(game, x, y, 'projectile');
+Blast.create = (game, x, y) => {
+    return new Blast(game, x, y, 'blast');
 };
 
-export default Projectile;
+export default Blast;
