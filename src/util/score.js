@@ -33,7 +33,7 @@ export default {
      */
     getSortedScores()
     {
-        return globalState.get('score').splice().sort((a, b) => a < b);
+        return globalState.get('score').slice(0).sort((a, b) => a < b);
     },
 
     getNonWinningPlayers()
