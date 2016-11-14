@@ -3,7 +3,7 @@ import AbstractObject from './abstract-object';
 import Blast from './blast';
 import globalState from '../util/global-state';
 import colors from '../data/colors';
-import delay from '../util/delay'
+import DelayTimer from '../util/delay';
 
 class Player extends AbstractObject
 {
@@ -35,6 +35,8 @@ class Player extends AbstractObject
             hitPlayer: game.add.audio('hit-player'),
             dash: game.add.audio('dash'),
         };
+
+        this.delayTimer = new DelayTimer(game);
     }
 
     update()
@@ -105,7 +107,7 @@ class Player extends AbstractObject
 
         if (this.ammo === 0) {
             this.loadTexture('player-out-of-ammo');
-            delay(this.loadTexture.bind(this, 'player'), 100);
+            this.delayTimer.setTimeout(this.loadTexture.bind(this, 'player'), 100);
             return;
         }
 
@@ -147,7 +149,7 @@ class Player extends AbstractObject
         this.cannonSprite.visible = false;
         this.loadTexture('player-reloading');
         this.sfx.reload.play();
-        delay(() => {
+        this.delayTimer.setTimeout(() => {
             this.reloading = false;
             this.ammo = this.maxAmmo;
             this.loadTexture('player');
@@ -169,20 +171,20 @@ class Player extends AbstractObject
 
         this.dashState = 'DASHING';
         this.sfx.dash.play();
-        delay(
+        this.delayTimer.setTimeout(
             () => {
                 this.dashState = 'POST_DASH'
             },
             500
         )
-        .then(delay.bind(
+        .then(this.delayTimer.setTimeout.bind(
             this,
             () => {
                 this.dashState = 'COOLDOWN';
             },
             500 - bonusTime
         ))
-        .then(delay.bind(
+        .then(this.delayTimer.setTimeout.bind(
             this,
             () => {
                 this.dashState = 'READY';
