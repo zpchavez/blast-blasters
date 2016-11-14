@@ -28,6 +28,13 @@ class Player extends AbstractObject
         );
         this.cannonSprite.visible = false;
         this.cannonSprite.anchor.setTo(0.5, 0.5);
+
+        this.sfx = {
+            blast: game.add.audio('blast'),
+            reload: game.add.audio('reload'),
+            hitPlayer: game.add.audio('hit-player'),
+            dash: game.add.audio('dash'),
+        };
     }
 
     update()
@@ -123,6 +130,8 @@ class Player extends AbstractObject
         blast.body.velocity.y = velocity[1];
         blast.shotBy = this.playerNum;
 
+        this.sfx.blast.play();
+
         if (this.ammo < 1) {
             this.cannonSprite.visible = false;
         }
@@ -137,6 +146,7 @@ class Player extends AbstractObject
         this.reloading = true;
         this.cannonSprite.visible = false;
         this.loadTexture('player-reloading');
+        this.sfx.reload.play();
         delay(() => {
             this.reloading = false;
             this.ammo = this.maxAmmo;
@@ -158,6 +168,7 @@ class Player extends AbstractObject
         }
 
         this.dashState = 'DASHING';
+        this.sfx.dash.play();
         delay(
             () => {
                 this.dashState = 'POST_DASH'
@@ -188,6 +199,7 @@ class Player extends AbstractObject
             globalState.state.score[hitBy] += 1;
         }
         this.getHitCallback(hitBy);
+        this.sfx.hitPlayer.play();
         this.destroy();
     }
 
@@ -261,6 +273,13 @@ Player.loadAssets = (state) => {
     state.load.image('player-reloading', 'assets/img/player-reloading.png');
     state.load.image('blast', 'assets/img/blast.png');
     state.load.image('cannon', 'assets/img/cannon.png');
+    state.load.audio('blast', 'assets/sfx/blast.wav');
+    state.load.audio('bounce', 'assets/sfx/bounce.wav');
+    state.load.audio('hit-player', 'assets/sfx/hit-player.wav');
+    state.load.audio('hit-wall', 'assets/sfx/hit-wall.wav');
+    state.load.audio('fizzle', 'assets/sfx/fizzle.wav');
+    state.load.audio('reload', 'assets/sfx/reload.wav');
+    state.load.audio('dash', 'assets/sfx/dash.wav');
 };
 
 export default Player;

@@ -10,6 +10,12 @@ class Blast extends AbstractObject
 
         this.state = game.state;
         this.initPhysics(this.state);
+
+        this.sfx = {
+            hitWall: game.add.audio('hit-wall'),
+            fizzle: game.add.audio('fizzle'),
+            bounce: game.add.audio('bounce'),
+        }
     }
 
     setBounces(count)
@@ -43,7 +49,13 @@ class Blast extends AbstractObject
             } else if (! Player.prototype.isPrototypeOf(contactingBody.sprite)) {
                 if (contactingBody.isWall && this.bounces) {
                     this.bounces -= 1;
+                    this.sfx.bounce.play();
                 } else {
+                    if (contactingBody.isWall) {
+                        this.sfx.hitWall.play();
+                    } else {
+                        this.sfx.fizzle.play();
+                    }
                     this.destroy();
                 }
             }
