@@ -15,7 +15,7 @@ export default {
         maxLevel: 3,
     },
     AUTO_BLASTER: {
-        name: 'Auto Blaser',
+        name: 'Auto Blaster',
         description: 'Hold down blast to auto-blast',
         maxLevel: 1,
     },
