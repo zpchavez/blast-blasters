@@ -28,6 +28,7 @@ class ModificationState extends AbstractState
             this.renderModSelection();
         } else {
             this.game.state.add('game', new GameState(), true);
+            return;
         }
 
         this.initInputs();
