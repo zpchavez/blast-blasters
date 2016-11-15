@@ -243,7 +243,7 @@ class Player extends AbstractObject
 
     getBlastVelocity()
     {
-        return 800;
+        return 550;
     }
 
     getDashMultiplier()
