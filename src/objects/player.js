@@ -107,7 +107,15 @@ class Player extends AbstractObject
 
         if (this.ammo === 0) {
             this.loadTexture('player-out-of-ammo');
-            this.delayTimer.setTimeout(this.loadTexture.bind(this, 'player'), 100);
+            this.delayTimer.setTimeout(
+                () => {
+                    if (this.game === null) {
+                        return;
+                    }
+                    this.loadTexture('player');
+                },
+                100
+            );
             return;
         }
 
@@ -150,6 +158,9 @@ class Player extends AbstractObject
         this.loadTexture('player-reloading');
         this.sfx.reload.play();
         this.delayTimer.setTimeout(() => {
+            if (this.game === null) {
+                return;
+            }
             this.reloading = false;
             this.ammo = this.maxAmmo;
             this.loadTexture('player');
