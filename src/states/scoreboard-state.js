@@ -5,6 +5,7 @@ import globalState from '../util/global-state';
 import colors from '../data/colors';
 import leftpad from '../util/leftpad';
 import score from '../util/score';
+import DelayTimer from '../util/delay';
 
 class ScoreboardState extends AbstractState
 {
@@ -18,11 +19,13 @@ class ScoreboardState extends AbstractState
     {
         super.create();
 
+        this.delayTimer = new DelayTimer(this.game);
+
         const winningPlayers = score.getWinningPlayers();
 
         if (winningPlayers.length === 1) {
             this.renderWinner(winningPlayers[0]);
-            setTimeout(this.returnToMainMenu.bind(this), 3000);
+            this.delayTimer.setTimeout(this.returnToMainMenu.bind(this), 3000);
         } else {
             this.renderPlayerKills();
             this.renderScore();
@@ -30,7 +33,7 @@ class ScoreboardState extends AbstractState
                 // It's a tie. The non-winning players are eliminated.
                 globalState.set('eliminatedPlayers', score.getNonWinningPlayers());
             }
-            setTimeout(this.loadNextRound.bind(this), 3000);
+            this.delayTimer.setTimeout(this.loadNextRound.bind(this), 3000);
         }
     }
 
