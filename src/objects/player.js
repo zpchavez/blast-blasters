@@ -95,14 +95,14 @@ class Player extends AbstractObject
 
     fire()
     {
+        if (this.game === null || this.reloading || this.aimAngle === null) {
+            return;
+        }
+
         if (! this.autoFireTimer && globalState.getMod(this.playerNum, 'AUTO_BLASTER')) {
             this.autoFireTimer = this.game.time.create();
             this.autoFireTimer.loop(100, this.fire, this);
             this.autoFireTimer.start();
-        }
-
-        if (this.game === null || this.reloading || this.aimAngle === null) {
-            return;
         }
 
         if (this.ammo === 0) {

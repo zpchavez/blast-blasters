@@ -8,7 +8,7 @@ export default class DelayTimer
     setTimeout(callback, time)
     {
         return new Promise(resolve => {
-            game.time.events.add(
+            this.game.time.events.add(
                 time,
                 () => {
                     callback();

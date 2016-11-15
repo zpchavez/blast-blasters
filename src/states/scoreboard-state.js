@@ -13,12 +13,13 @@ class ScoreboardState extends AbstractState
     {
         super();
         this.playerKills = playerKills;
-        this.delayTimer = new DelayTimer;
     }
 
     create()
     {
         super.create();
+
+        this.delayTimer = new DelayTimer(this.game);
 
         const winningPlayers = score.getWinningPlayers();
 
