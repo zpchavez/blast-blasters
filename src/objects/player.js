@@ -29,11 +29,16 @@ class Player extends AbstractObject
         this.cannonSprite.visible = false;
         this.cannonSprite.anchor.setTo(0.5, 0.5);
 
+        // With Blast Bounce mod, player is immune to one self hit per level
+        const blastBounceMod = globalState.getMod(this.playerNum, 'BLAST_BOUNCE');
+        this.selfieImmunity = blastBounceMod ? blastBounceMod.level : 0;
+
         this.sfx = {
             blast: game.add.audio('blast'),
             reload: game.add.audio('reload'),
             hitPlayer: game.add.audio('hit-player'),
             dash: game.add.audio('dash'),
+            pop: game.add.audio('pop'),
         };
 
         this.delayTimer = new DelayTimer(game);
@@ -206,6 +211,11 @@ class Player extends AbstractObject
 
     getHit(hitBy)
     {
+        if (hitBy === this.playerNum && this.selfieImmunity > 0) {
+            this.selfieImmunity -= 1;
+            this.sfx.pop.play();
+            return;
+        }
         if (hitBy === this.playerNum && globalState.state.score[this.playerNum] > 0) {
             globalState.state.score[hitBy] -= 1;
         } else {
@@ -291,6 +301,7 @@ Player.loadAssets = (state) => {
     state.load.audio('hit-player', 'assets/sfx/hit-player.wav');
     state.load.audio('hit-wall', 'assets/sfx/hit-wall.wav');
     state.load.audio('fizzle', 'assets/sfx/fizzle.wav');
+    state.load.audio('pop', 'assets/sfx/pop.wav');
     state.load.audio('reload', 'assets/sfx/reload.wav');
     state.load.audio('dash', 'assets/sfx/dash.wav');
 };
