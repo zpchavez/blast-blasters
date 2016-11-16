@@ -159,6 +159,7 @@ class ModificationState extends AbstractState
                     nonLeadingPlayers[this.selectedPlayer],
                     this.modChoices[this.selectedMod]
                 );
+                this.controls.reset();
                 this.game.state.add('game', new GameState(), true);
             }
         }
