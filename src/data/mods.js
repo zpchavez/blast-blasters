@@ -1,7 +1,7 @@
 export default {
     BLAST_BOUNCE: {
         name: 'Blast Bounce',
-        description: 'Blasts bounce off walls',
+        description: 'Blasts bounce off walls. Bonus: Limited selfie immunity.',
         maxLevel: 3,
     },
     AMMO_BLAMMO: {
