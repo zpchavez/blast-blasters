@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" source="tileset.tsx"/>
+ <layer name="walls" width="40" height="22">
+  <data encoding="base64" compression="zlib">
+   eJzt1FEKACAIA1C9/6U7gbBsSoMN+grsVWhGRBZrK9X5247bdH3IPRlvoehDarJ86P6tjxX77FPrX/vmfUgdRm1FX+cvXn3d+aLqY/eHfXu+n6LiY8z6KccBhpEBEQ==
+  </data>
+ </layer>
+ <layer name="spawn-points" width="40" height="22">
+  <data encoding="base64" compression="zlib">
+   eJzt1bEJADAIAEEb9185ra0gRPBugu8+ggn5O6DY1ALALd0HeRZAzwO81AAV
+  </data>
+ </layer>
+</map>
