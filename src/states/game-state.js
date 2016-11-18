@@ -18,7 +18,7 @@ class GameState extends AbstractState
     {
         Player.loadAssets(this);
 
-        const mapToLoad = rng.between(1, 3);
+        const mapToLoad = rng.between(1, 8);
         this.load.tilemap(
             'map',
             `assets/maps/map${mapToLoad}.json`,
