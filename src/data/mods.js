@@ -24,4 +24,9 @@ export default {
         description: `Don't slow down as much. Dash again sooner.`,
         maxLevel: 3,
     },
+    SHIELD: {
+        name: 'Shield',
+        description: 'Withstand an extra blast',
+        maxLevel: 3,
+    }
 }
