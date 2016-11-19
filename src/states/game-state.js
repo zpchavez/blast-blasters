@@ -11,6 +11,7 @@ import Controls, {
 import globalState from '../util/global-state';
 import ScoreboardState from './scoreboard-state';
 import rng from '../util/rng';
+import DelayTimer from '../util/delay';
 
 class GameState extends AbstractState
 {
@@ -30,6 +31,8 @@ class GameState extends AbstractState
             'tileset',
             'assets/maps/tileset.png'
         );
+
+        this.delayTimer = new DelayTimer(this.game);
     }
 
     create()
@@ -57,7 +60,7 @@ class GameState extends AbstractState
 
         let remainingPlayers = this.players.filter(player => player.game !== null).length;
         if (remainingPlayers <= 1) {
-            this.endRound();
+            this.delayTimer.setTimeout(this.endRound.bind(this), 1000);
         }
     }
 
