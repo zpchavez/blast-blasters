@@ -9,7 +9,7 @@ import colors from '../data/colors';
 import mods from '../data/mods';
 import Player from '../objects/player';
 
-const MOD_CHOICES_COUNT = 3;
+const MOD_CHOICES_COUNT = 2;
 const MOD_LEAD_THRESHOLD = 3;
 
 const CURSOR_SECTION_MODS = 'CURSOR_SECTION_MODS';
