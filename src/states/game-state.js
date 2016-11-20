@@ -21,6 +21,9 @@ class GameState extends AbstractState
     {
         Player.loadAssets(this);
 
+        this.load.audio('hurry-up', 'assets/sfx/hurry-up.wav');
+        this.load.audio('wall-closing-in', 'assets/sfx/wall-closing-in.wav');
+
         const mapToLoad = rng.between(1, 8);
         this.load.tilemap(
             'map',
@@ -40,6 +43,11 @@ class GameState extends AbstractState
     create()
     {
         super.create();
+
+        this.sfx = {
+            wallClosingIn: this.game.add.audio('wall-closing-in'),
+            hurryUp: this.game.add.audio('hurry-up'),
+        };
 
         this.numPlayers = globalState.get('players');
 
@@ -168,6 +176,8 @@ class GameState extends AbstractState
 
     beginHurryUpSequence()
     {
+        this.sfx.hurryUp.play();
+
         this.hurryUpText = this.game.add.text(
             -150,
             (this.game.height / 2) - 42,
@@ -224,6 +234,7 @@ class GameState extends AbstractState
     {
         let tilePos = null;
         let tile = null;
+
         if (! this.tilePosGen) {
             this.tilePosGen = this.getNextHurryUpTileGenerator();
         }
