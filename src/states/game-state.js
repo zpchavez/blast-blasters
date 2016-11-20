@@ -22,7 +22,6 @@ class GameState extends AbstractState
         Player.loadAssets(this);
 
         this.load.audio('hurry-up', 'assets/sfx/hurry-up.wav');
-        this.load.audio('wall-closing-in', 'assets/sfx/wall-closing-in.wav');
 
         const mapToLoad = rng.between(1, 8);
         this.load.tilemap(
@@ -45,7 +44,6 @@ class GameState extends AbstractState
         super.create();
 
         this.sfx = {
-            wallClosingIn: this.game.add.audio('wall-closing-in'),
             hurryUp: this.game.add.audio('hurry-up'),
         };
 

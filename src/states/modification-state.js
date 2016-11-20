@@ -24,13 +24,17 @@ class ModificationState extends AbstractState
 
     create()
     {
+        let modChoices = null;
         if (score.getLead() > MOD_LEAD_THRESHOLD) {
-            this.renderModSelection();
-        } else {
+            modChoices = this.getModChoices();
+        }
+
+        if (! modChoices || ! modChoices.length) {
             this.game.state.add('game', new GameState(), true);
             return;
         }
 
+        this.renderModSelection(modChoices);
         this.initInputs();
     }
 
@@ -174,10 +178,10 @@ class ModificationState extends AbstractState
         }
     }
 
-    renderModSelection()
+    renderModSelection(modChoices)
     {
         this.renderHeading();
-        this.renderModChoices();
+        this.renderModChoices(modChoices);
         this.renderModDescription();
         this.renderPlayers();
         this.renderCursor();
@@ -201,9 +205,9 @@ class ModificationState extends AbstractState
         this.headingText.anchor.set(0.5);
     }
 
-    renderModChoices()
+    renderModChoices(modChoices)
     {
-        this.modChoices = this.getModChoices();
+        this.modChoices = modChoices;
         const options = { fill: '#ffffff' };
 
         this.selectedMod = 0;
