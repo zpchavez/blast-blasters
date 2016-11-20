@@ -13,6 +13,8 @@ import ScoreboardState from './scoreboard-state';
 import rng from '../util/rng';
 import DelayTimer from '../util/delay';
 
+const ROUND_TIME_LIMIT = 20000;
+
 class GameState extends AbstractState
 {
     preload()
@@ -45,7 +47,7 @@ class GameState extends AbstractState
         this.initMap();
         this.initPlayers();
         this.initInputs();
-        this.beginHurryUpSequence();
+        this.initRoundTimer();
     }
 
     update()
@@ -70,6 +72,13 @@ class GameState extends AbstractState
 
     }
 
+    initRoundTimer()
+    {
+        this.roundTimer = this.game.time.create();
+        this.roundTimer.add(ROUND_TIME_LIMIT, this.beginHurryUpSequence, this);
+        this.roundTimer.start();
+    }
+
     initPhysics()
     {
         this.game.physics.startSystem(Phaser.Physics.P2JS);
@@ -91,6 +100,7 @@ class GameState extends AbstractState
         this.layer = this.map.createLayer('walls');
         this.layer.resizeWorld();
         this.map.setCollision(1, true, this.layer);
+        this.setWallPhysics();
     }
 
     setWallPhysics()
@@ -158,7 +168,24 @@ class GameState extends AbstractState
 
     beginHurryUpSequence()
     {
+        this.hurryUpText = this.game.add.text(
+            -150,
+            (this.game.height / 2) - 42,
+            'Hurry Up!',
+            {
+                font: '42px Arial',
+                fill: '#ff0000',
+                stroke: '#ffffff',
+                strokeThickness: 5,
+            }
+        );
         this.hurryUpTimer = this.game.time.create();
+        let hurryUpTextScrollEvent = this.hurryUpTimer.loop(5, () => {
+            this.hurryUpText.x += 5;
+            if (this.hurryUpText.x > this.game.width) {
+                this.hurryUpTimer.remove(hurryUpTextScrollEvent);
+            }
+        }, this);
         this.hurryUpTimer.loop(100, this.addHurryUpTile, this);
         this.hurryUpTimer.start();
     }
