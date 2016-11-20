@@ -12,4 +12,4 @@ should work, but XBox360 controllers are recommended.
 
 You should be using Google Chrome, as the game has not be tested with any other browser.
 
-You can play the game [here](https://zpchavez.github.io/game-off-2016).
+You can play the game [here](https://zpchavez.github.io/blast-blasters).

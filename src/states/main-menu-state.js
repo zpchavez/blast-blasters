@@ -106,7 +106,7 @@ class MainMenuState extends AbstractState
     selectOption()
     {
         globalState.set('players', this.playerChoices[this.numPlayersSelection].players);
-        this.game.state.add('game', new GameState, true);
+        this.loadNextRound();
     }
 
     initInputs()
@@ -117,11 +117,6 @@ class MainMenuState extends AbstractState
             this.controls.onDown(i, 'DOWN', this.moveCursorDown.bind(this));
             this.controls.onDown(i, 'SELECT', this.selectOption.bind(this));
         }
-    }
-
-    shutdown()
-    {
-        this.controls.reset();
     }
 }
 

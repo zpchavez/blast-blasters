@@ -33,7 +33,7 @@ class ScoreboardState extends AbstractState
                 // It's a tie. The non-winning players are eliminated.
                 globalState.set('eliminatedPlayers', score.getNonWinningPlayers());
             }
-            this.delayTimer.setTimeout(this.loadNextRound.bind(this), 3000);
+            this.delayTimer.setTimeout(this.loadModScreen.bind(this), 3000);
         }
     }
 
@@ -57,7 +57,7 @@ class ScoreboardState extends AbstractState
         this.game.add.text(
             this.game.width / 2 - 150,
             50,
-            'Round Kills',
+            'Round Score',
             {
                 font: '40px Arial',
                 fill: '#ffffff',
@@ -130,7 +130,7 @@ class ScoreboardState extends AbstractState
         });
     }
 
-    loadNextRound()
+    loadModScreen()
     {
         this.game.state.add('game', new ModificationState(), true);
     }

@@ -73,11 +73,6 @@ class GameState extends AbstractState
         }
     }
 
-    shutdown()
-    {
-
-    }
-
     initRoundTimer()
     {
         this.roundTimer = this.game.time.create();
@@ -249,6 +244,10 @@ class GameState extends AbstractState
             this.map.putTile(1, tilePos.x, tilePos.y, this.layer);
             // If player is in this tile, destroy them
             for (let playerNum = 0; playerNum < this.numPlayers; playerNum += 1) {
+                // Unless they are already destroyed
+                if (this.players[playerNum].game === null) {
+                    continue;
+                }
                 let tilePlayerIsOn = this.map.getTileWorldXY(
                     this.players[playerNum].x,
                     this.players[playerNum].y,
