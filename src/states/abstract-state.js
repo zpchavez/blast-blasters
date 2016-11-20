@@ -9,7 +9,7 @@ class AbstractState extends Phaser.State
 
     toggleFullscreen(event)
     {
-        if (event.button === 0) { // Only toggle if it's the left button
+        if (event.button === Phaser.Mouse.LEFT_BUTTON) {
             if (this.game.scale.isFullScreen) {
                 this.game.scale.stopFullScreen();
             } else {
