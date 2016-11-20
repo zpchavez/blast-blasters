@@ -216,6 +216,16 @@ class Player extends AbstractObject
         ));
     }
 
+    dieByMapHazard()
+    {
+        if (globalState.state.score[this.playerNum] > 0) {
+            globalState.state.score[hitBy] -= 1;
+        }
+        this.sfx.hitPlayer.play();
+        this.getHitCallback(this.playerNum);
+        this.destroy();
+    }
+
     getHit(hitBy)
     {
         if (this.shieldHp) {

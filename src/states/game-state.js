@@ -91,6 +91,10 @@ class GameState extends AbstractState
         this.layer = this.map.createLayer('walls');
         this.layer.resizeWorld();
         this.map.setCollision(1, true, this.layer);
+    }
+
+    setWallPhysics()
+    {
         let bodies = this.game.physics.p2.convertTilemap(this.map, this.layer);
         bodies.forEach(body => {
             body.setCollisionGroup(this.collisionGroup)
@@ -207,6 +211,21 @@ class GameState extends AbstractState
 
         if (tilePos) {
             this.map.putTile(1, tilePos.x, tilePos.y, this.layer);
+            // If player is in this tile, destroy them
+            for (let playerNum = 0; playerNum < this.numPlayers; playerNum += 1) {
+                let tilePlayerIsOn = this.map.getTileWorldXY(
+                    this.players[playerNum].x,
+                    this.players[playerNum].y,
+                    this.map.scaledTileWidth,
+                    this.map.scaledTileHeight,
+                    this.layer,
+                    true
+                );
+                if (tilePlayerIsOn.x === tile.x && tilePlayerIsOn.y === tile.y) {
+                    this.players[playerNum].dieByMapHazard();
+                }
+            }
+            this.setWallPhysics();
         } else {
             this.hurryUpTimer.destroy();
             this.hurryUpTimer = null;
