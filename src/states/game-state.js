@@ -45,6 +45,7 @@ class GameState extends AbstractState
         this.initMap();
         this.initPlayers();
         this.initInputs();
+        this.beginHurryUpSequence();
     }
 
     update()
@@ -149,6 +150,67 @@ class GameState extends AbstractState
             const point = spawnPoints.splice(pointIndex, 1)[0];
             player.reset(point.x + 16, point.y + 16);
         });
+    }
+
+    beginHurryUpSequence()
+    {
+        this.hurryUpTimer = this.game.time.create();
+        this.hurryUpTimer.loop(100, this.addHurryUpTile, this);
+        this.hurryUpTimer.start();
+    }
+
+    * getNextHurryUpTileGenerator()
+    {
+        const MAX_X = 39;
+        const MAX_Y = 21;
+        let xBeg = 0, yBeg = 0, xEnd = MAX_X, yEnd = MAX_Y;
+        let x = 0, y = 0;
+
+        while (!(x === 10 && y === 11)) {
+            if (x < xEnd && y === yBeg) {
+                x += 1;
+            } else if (x === xEnd && y < yEnd) {
+                if (y === yEnd - 1 && x === xEnd) {
+                    xBeg += 1;
+                    xEnd -= 1;
+                }
+                y += 1;
+            } else if (y === yEnd && x >= xBeg) {
+                if (x === xBeg && y === yEnd) {
+                    yEnd -= 1;
+                    yBeg += 1;
+                }
+                x -= 1;
+            } else {
+                y -= 1;
+            }
+            yield {x, y};
+        }
+        yield null;
+    }
+
+    addHurryUpTile()
+    {
+        let tilePos = null;
+        let tile = null;
+        if (! this.tilePosGen) {
+            this.tilePosGen = this.getNextHurryUpTileGenerator();
+        }
+        do {
+            tilePos = this.tilePosGen.next().value;
+            if (tilePos === null) {
+                tile = null;
+            } else {
+                tile = this.map.getTile(tilePos.x, tilePos.y, this.layer, true);
+            }
+        } while (tile && tile.index !== -1)
+
+        if (tilePos) {
+            this.map.putTile(1, tilePos.x, tilePos.y, this.layer);
+        } else {
+            this.hurryUpTimer.destroy();
+            this.hurryUpTimer = null;
+        }
     }
 
     endRound()
