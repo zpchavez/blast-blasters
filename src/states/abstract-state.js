@@ -7,12 +7,14 @@ class AbstractState extends Phaser.State
         this.game.input.onDown.add(this.toggleFullscreen, this);
     }
 
-    toggleFullscreen()
+    toggleFullscreen(event)
     {
-        if (this.game.scale.isFullScreen) {
-            this.game.scale.stopFullScreen();
-        } else {
-            this.game.scale.startFullScreen(false);
+        if (event.button === 0) { // Only toggle if it's the left button
+            if (this.game.scale.isFullScreen) {
+                this.game.scale.stopFullScreen();
+            } else {
+                this.game.scale.startFullScreen(false);
+            }
         }
     }
 
