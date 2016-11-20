@@ -1,5 +1,6 @@
 import AbstractState from './abstract-state';
 import GameState from './game-state';
+import TextState from './text-state';
 import Controls from '../util/controls';
 import globalState from '../util/global-state';
 import score from '../util/score';
@@ -30,7 +31,7 @@ class ModificationState extends AbstractState
         }
 
         if (! modChoices || ! modChoices.length) {
-            this.game.state.add('game', new GameState(), true);
+            this.loadNextRound();
             return;
         }
 
@@ -164,7 +165,7 @@ class ModificationState extends AbstractState
                     this.modChoices[this.selectedMod]
                 );
                 this.controls.reset();
-                this.game.state.add('game', new GameState(), true);
+                this.loadNextRound();
             }
         }
     }

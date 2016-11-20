@@ -3,6 +3,7 @@ import colors from '../data/colors';
 const initialState = Object.assign(
     {
         colors: [0, 1, 2, 3],
+        round: 0,
         mods: [],
         // Players that are out of the game because other players are tied for the win
         eliminatedPlayers: [],
