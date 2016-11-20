@@ -11,12 +11,18 @@ import Controls, {
 import globalState from '../util/global-state';
 import ScoreboardState from './scoreboard-state';
 import rng from '../util/rng';
+import DelayTimer from '../util/delay';
+
+const ROUND_TIME_LIMIT = 20000;
 
 class GameState extends AbstractState
 {
     preload()
     {
         Player.loadAssets(this);
+
+        this.load.audio('hurry-up', 'assets/sfx/hurry-up.wav');
+        this.load.audio('wall-closing-in', 'assets/sfx/wall-closing-in.wav');
 
         const mapToLoad = rng.between(1, 8);
         this.load.tilemap(
@@ -30,11 +36,18 @@ class GameState extends AbstractState
             'tileset',
             'assets/maps/tileset.png'
         );
+
+        this.delayTimer = new DelayTimer(this.game);
     }
 
     create()
     {
         super.create();
+
+        this.sfx = {
+            wallClosingIn: this.game.add.audio('wall-closing-in'),
+            hurryUp: this.game.add.audio('hurry-up'),
+        };
 
         this.numPlayers = globalState.get('players');
 
@@ -42,6 +55,7 @@ class GameState extends AbstractState
         this.initMap();
         this.initPlayers();
         this.initInputs();
+        this.initRoundTimer();
     }
 
     update()
@@ -57,13 +71,20 @@ class GameState extends AbstractState
 
         let remainingPlayers = this.players.filter(player => player.game !== null).length;
         if (remainingPlayers <= 1) {
-            this.endRound();
+            this.delayTimer.setTimeout(this.endRound.bind(this), 1000);
         }
     }
 
     shutdown()
     {
 
+    }
+
+    initRoundTimer()
+    {
+        this.roundTimer = this.game.time.create();
+        this.roundTimer.add(ROUND_TIME_LIMIT, this.beginHurryUpSequence, this);
+        this.roundTimer.start();
     }
 
     initPhysics()
@@ -87,6 +108,11 @@ class GameState extends AbstractState
         this.layer = this.map.createLayer('walls');
         this.layer.resizeWorld();
         this.map.setCollision(1, true, this.layer);
+        this.setWallPhysics();
+    }
+
+    setWallPhysics()
+    {
         let bodies = this.game.physics.p2.convertTilemap(this.map, this.layer);
         bodies.forEach(body => {
             body.setCollisionGroup(this.collisionGroup)
@@ -146,6 +172,102 @@ class GameState extends AbstractState
             const point = spawnPoints.splice(pointIndex, 1)[0];
             player.reset(point.x + 16, point.y + 16);
         });
+    }
+
+    beginHurryUpSequence()
+    {
+        this.sfx.hurryUp.play();
+
+        this.hurryUpText = this.game.add.text(
+            -150,
+            (this.game.height / 2) - 42,
+            'Hurry Up!',
+            {
+                font: '42px Arial',
+                fill: '#ff0000',
+                stroke: '#ffffff',
+                strokeThickness: 5,
+            }
+        );
+        this.hurryUpTimer = this.game.time.create();
+        let hurryUpTextScrollEvent = this.hurryUpTimer.loop(5, () => {
+            this.hurryUpText.x += 5;
+            if (this.hurryUpText.x > this.game.width) {
+                this.hurryUpTimer.remove(hurryUpTextScrollEvent);
+            }
+        }, this);
+        this.hurryUpTimer.loop(100, this.addHurryUpTile, this);
+        this.hurryUpTimer.start();
+    }
+
+    * getNextHurryUpTileGenerator()
+    {
+        const MAX_X = 39;
+        const MAX_Y = 21;
+        let xBeg = 0, yBeg = 0, xEnd = MAX_X, yEnd = MAX_Y;
+        let x = 0, y = 0;
+
+        while (!(x === 10 && y === 11)) {
+            if (x < xEnd && y === yBeg) {
+                x += 1;
+            } else if (x === xEnd && y < yEnd) {
+                if (y === yEnd - 1 && x === xEnd) {
+                    xBeg += 1;
+                    xEnd -= 1;
+                }
+                y += 1;
+            } else if (y === yEnd && x >= xBeg) {
+                if (x === xBeg && y === yEnd) {
+                    yEnd -= 1;
+                    yBeg += 1;
+                }
+                x -= 1;
+            } else {
+                y -= 1;
+            }
+            yield {x, y};
+        }
+        yield null;
+    }
+
+    addHurryUpTile()
+    {
+        let tilePos = null;
+        let tile = null;
+
+        if (! this.tilePosGen) {
+            this.tilePosGen = this.getNextHurryUpTileGenerator();
+        }
+        do {
+            tilePos = this.tilePosGen.next().value;
+            if (tilePos === null) {
+                tile = null;
+            } else {
+                tile = this.map.getTile(tilePos.x, tilePos.y, this.layer, true);
+            }
+        } while (tile && tile.index !== -1)
+
+        if (tilePos) {
+            this.map.putTile(1, tilePos.x, tilePos.y, this.layer);
+            // If player is in this tile, destroy them
+            for (let playerNum = 0; playerNum < this.numPlayers; playerNum += 1) {
+                let tilePlayerIsOn = this.map.getTileWorldXY(
+                    this.players[playerNum].x,
+                    this.players[playerNum].y,
+                    this.map.scaledTileWidth,
+                    this.map.scaledTileHeight,
+                    this.layer,
+                    true
+                );
+                if (tilePlayerIsOn.x === tile.x && tilePlayerIsOn.y === tile.y) {
+                    this.players[playerNum].dieByMapHazard();
+                }
+            }
+            this.setWallPhysics();
+        } else {
+            this.hurryUpTimer.destroy();
+            this.hurryUpTimer = null;
+        }
     }
 
     endRound()

@@ -20,11 +20,7 @@ class Player extends AbstractObject
         this.ammo = this.maxAmmo;
 
         this.cannonSprite = this.addChild(
-            game.make.sprite(
-                0,
-                0,
-                'cannon'
-            )
+            game.make.sprite(0, 0, 'cannon')
         );
         this.cannonSprite.visible = false;
         this.cannonSprite.anchor.setTo(0.5, 0.5);
@@ -33,12 +29,23 @@ class Player extends AbstractObject
         const blastBounceMod = globalState.getMod(this.playerNum, 'BLAST_BOUNCE');
         this.selfieImmunity = blastBounceMod ? blastBounceMod.level : 0;
 
+        const shieldMod = globalState.getMod(this.playerNum, 'SHIELD');
+        this.shieldHp = shieldMod ? shieldMod.level : 0;
+        if (this.shieldHp) {
+            this.shieldSprite = this.addChild(
+                game.make.sprite(0, 0, `shield-${shieldMod.level}`)
+            );
+            this.shieldSprite.tint = 0xf000ff;
+            this.shieldSprite.anchor.setTo(0.5);
+        }
+
         this.sfx = {
             blast: game.add.audio('blast'),
             reload: game.add.audio('reload'),
             hitPlayer: game.add.audio('hit-player'),
             dash: game.add.audio('dash'),
             pop: game.add.audio('pop'),
+            shieldHit: game.add.audio('shield-hit'),
         };
 
         this.delayTimer = new DelayTimer(game);
@@ -209,8 +216,28 @@ class Player extends AbstractObject
         ));
     }
 
+    dieByMapHazard()
+    {
+        if (globalState.state.score[this.playerNum] > 0) {
+            globalState.state.score[hitBy] -= 1;
+        }
+        this.sfx.hitPlayer.play();
+        this.getHitCallback(this.playerNum);
+        this.destroy();
+    }
+
     getHit(hitBy)
     {
+        if (this.shieldHp) {
+            this.shieldHp -= 1;
+            if (this.shieldHp) {
+                this.shieldSprite.loadTexture(`shield-${this.shieldHp}`);
+            } else {
+                this.shieldSprite.visible = false;
+            }
+            this.sfx.shieldHit.play();
+            return;
+        }
         if (hitBy === this.playerNum && this.selfieImmunity > 0) {
             this.selfieImmunity -= 1;
             this.sfx.pop.play();
@@ -296,12 +323,16 @@ Player.loadAssets = (state) => {
     state.load.image('player-reloading', 'assets/img/player-reloading.png');
     state.load.image('blast', 'assets/img/blast.png');
     state.load.image('cannon', 'assets/img/cannon.png');
+    state.load.image('shield-1', 'assets/img/shield-1.png');
+    state.load.image('shield-2', 'assets/img/shield-2.png');
+    state.load.image('shield-3', 'assets/img/shield-3.png');
     state.load.audio('blast', 'assets/sfx/blast.wav');
     state.load.audio('bounce', 'assets/sfx/bounce.wav');
     state.load.audio('hit-player', 'assets/sfx/hit-player.wav');
     state.load.audio('hit-wall', 'assets/sfx/hit-wall.wav');
     state.load.audio('fizzle', 'assets/sfx/fizzle.wav');
     state.load.audio('pop', 'assets/sfx/pop.wav');
+    state.load.audio('shield-hit', 'assets/sfx/shield-hit.wav');
     state.load.audio('reload', 'assets/sfx/reload.wav');
     state.load.audio('dash', 'assets/sfx/dash.wav');
 };
