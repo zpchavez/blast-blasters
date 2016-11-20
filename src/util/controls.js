@@ -34,24 +34,13 @@ class Controls
         this.rightStickY = [0, 0, 0, 0];
         this.onDownMappings = [{}, {}, {}, {}];
         this.onUpMappings = [{}, {}, {}, {}];
+        this.game = game;
 
-        for (var player = 0; player < 4; player += 1) {
-            game.input.gamepad['pad' + (player + 1)].onAxisCallback = (
-                this._getGamepadAxisCallback(player)
-            );
-            game.input.gamepad['pad' + (player + 1)].onDownCallback = (
-                this._getGamepadDownCallback(player)
-            );
-            game.input.gamepad['pad' + (player + 1)].onUpCallback = (
-                this._getGamepadUpCallback(player)
-            );
-        }
+        this._initCallbacks();
 
         game.input.gamepad.start();
         // Lower deadzone from default 0.26 for slightly more precise aiming
         game.input.gamepad.setDeadZones(0.20);
-
-        this.game = game;
     }
 
     isDown(player, button)
@@ -102,6 +91,7 @@ class Controls
     {
         this.onDownMappings = [{}, {}, {}, {}];
         this.onUpMappings = [{}, {}, {}, {}];
+        this._initCallbacks();
     }
 
     _getStickAngle(propertyPrefix, player) {
@@ -116,6 +106,21 @@ class Controls
 
         var rad = Math.atan2(y, x) + Phaser.Math.degToRad(90);
         return rad;
+    }
+
+    _initCallbacks()
+    {
+        for (let player = 0; player < 4; player += 1) {
+            this.game.input.gamepad['pad' + (player + 1)].onAxisCallback = (
+                this._getGamepadAxisCallback(player)
+            );
+            this.game.input.gamepad['pad' + (player + 1)].onDownCallback = (
+                this._getGamepadDownCallback(player)
+            );
+            this.game.input.gamepad['pad' + (player + 1)].onUpCallback = (
+                this._getGamepadUpCallback(player)
+            );
+        }
     }
 
     _getGamepadConstants(button)
