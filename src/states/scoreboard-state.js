@@ -57,7 +57,7 @@ class ScoreboardState extends AbstractState
         this.game.add.text(
             this.game.width / 2 - 150,
             50,
-            'Round Kills',
+            'Round Score',
             {
                 font: '40px Arial',
                 fill: '#ffffff',
