@@ -13,7 +13,7 @@ export default [
     },
     {
         name: 'yellow',
-        hex: 0xffff00
+        hex: 0xffff00,
     },
     {
         name: 'grey',
