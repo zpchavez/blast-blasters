@@ -1,5 +1,5 @@
 import AbstractState from './abstract-state';
-import GameState from './game-state';
+import SelectColorState from './select-color-state';
 import globalState from '../util/global-state';
 import Controls from '../util/controls';
 
@@ -106,7 +106,7 @@ class MainMenuState extends AbstractState
     selectOption()
     {
         globalState.set('players', this.playerChoices[this.numPlayersSelection].players);
-        this.loadNextRound();
+        this.game.state.add('select-color', new SelectColorState(), true);
     }
 
     initInputs()

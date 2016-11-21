@@ -54,8 +54,8 @@ class ScoreboardState extends AbstractState
 
     renderPlayerKills()
     {
-        this.game.add.text(
-            this.game.width / 2 - 150,
+        let scoreText = this.game.add.text(
+            this.game.width / 2,
             50,
             'Round Score',
             {
@@ -65,6 +65,8 @@ class ScoreboardState extends AbstractState
                 strokeThickness: 2,
             }
         );
+        scoreText.anchor.set(0.5);
+
         this.playerKills.forEach((kills, killer) => {
             const color = colors[globalState.get('colors')[killer]];
             this.game.add.text(
@@ -92,8 +94,8 @@ class ScoreboardState extends AbstractState
 
     renderScore()
     {
-        this.game.add.text(
-            this.game.width / 2 - 150,
+        const totalText = this.game.add.text(
+            this.game.width / 2,
             380,
             'Total Score',
             {
@@ -103,6 +105,7 @@ class ScoreboardState extends AbstractState
                 strokeThickness: 2,
             }
         );
+        totalText.anchor.set(0.5);
         globalState.get('score').forEach((score, index) => {
             const color = colors[globalState.get('colors')[index]];
             this.game.add.text(

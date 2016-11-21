@@ -11,8 +11,13 @@ export default {
     },
     FASTER_RELOAD: {
         name: 'Faster Reload',
-        description: 'Reload faster!',
+        description: 'Reload faster',
         maxLevel: 3,
+    },
+    FASTER_BLASTER: {
+        name: 'Faster Blaster',
+        description: 'Blasts go faster',
+        maxLevel: 3
     },
     AUTO_BLASTER: {
         name: 'Auto Blaster',

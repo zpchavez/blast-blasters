@@ -6,16 +6,26 @@
 </head>
 
 <body>
-    <div id="content"></div>
+    <div id="instructions" style="display:block;color:white;text-align:center;margin:auto">
+        <div>Use XBox360 or other Gamepad API compatible controllers.</div>
+        <ul style="list-style-type:none">
+            <li><strong>Left stick</strong> moves</li>
+            <li><strong>Right stick</strong> aims</li>
+            <li><strong>Right bumper</strong> blasts</li>
+            <li><strong>Right trigger</strong> reloads</li>
+            <li><strong>Left bumper</strong> dashes</li>
+            <li>Click game area for full screen</li>
+        </ul>
+    </div>
 
     <div
         id="phaser"
         class="game"
         style="display:block;margin:auto;width:1280px"
-    />
+    >
+    </div>
 
     <script src="lib/phaser.js"></script>
     <script src="app.js"></script>
-
 </body>
 </html>

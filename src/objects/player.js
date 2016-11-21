@@ -280,7 +280,12 @@ class Player extends AbstractObject
 
     getBlastVelocity()
     {
-        return 550;
+        const fasterBlasterMod = globalState.getMod(this.playerNum, 'FASTER_BLASTER');
+        let speedBonus = 0;
+        if (fasterBlasterMod) {
+            speedBonus = 50 * fasterBlasterMod.level;
+        }
+        return 550 + speedBonus;
     }
 
     getDashMultiplier()
