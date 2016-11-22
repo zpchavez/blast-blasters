@@ -39,7 +39,7 @@ class ScoreboardState extends AbstractState
 
     renderWinner(player)
     {
-        const winnerColor = colors[player];
+        const winnerColor = colors[globalState.get('colors')[player]];
         const winnerText = this.game.add.text(
             this.game.width / 2,
             this.game.height / 2 - 100,
