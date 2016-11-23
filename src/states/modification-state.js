@@ -189,20 +189,26 @@ class ModificationState extends AbstractState
 
     renderHeading()
     {
-        const leadingPlayer = score.getLeadingPlayer();
-        const leadingColor = globalState.getPlayerColorInfo(leadingPlayer);
-        const leadingPlayerName = ucfirst(leadingColor.name);
-
         this.headingText = this.game.add.text(
             this.game.width / 2,
             20,
-            `You're too good, ${leadingPlayerName}. Augment your foes!`,
+            `You're too good,     . Augment your foes!`,
             {
                 font: '32px Arial',
                 fill: '#ffffff',
             }
         )
         this.headingText.anchor.set(0.5);
+
+        const leadingPlayer = score.getLeadingPlayer();
+        const leadingColor = globalState.getPlayerColorInfo(leadingPlayer);
+        const leadingPlayerSprite = this.game.make.sprite(
+            this.game.width / 2 - 45,
+            0,
+            'player'
+        );
+        leadingPlayerSprite.tint = leadingColor.hex;
+        this.game.world.addChild(leadingPlayerSprite);
     }
 
     renderModChoices(modChoices)
