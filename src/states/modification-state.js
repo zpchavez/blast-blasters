@@ -11,7 +11,6 @@ import mods from '../data/mods';
 import Player from '../objects/player';
 
 const MOD_CHOICES_COUNT = 2;
-const MOD_LEAD_THRESHOLD = 3;
 
 const CURSOR_SECTION_MODS = 'CURSOR_SECTION_MODS';
 const CURSOR_SECTION_PLAYERS = 'CURSOR_SECTION_PLAYERS';
@@ -26,7 +25,7 @@ class ModificationState extends AbstractState
     create()
     {
         let modChoices = null;
-        if (score.getLead() > MOD_LEAD_THRESHOLD) {
+        if (score.getFirstToLastPlaceDifference() >= this.getModLeadThreshold()) {
             modChoices = this.getModChoices();
         }
 
@@ -39,9 +38,9 @@ class ModificationState extends AbstractState
         this.initInputs();
     }
 
-    update()
+    getModLeadThreshold()
     {
-
+        return Math.ceil(score.getWinningScore() / 4);
     }
 
     initInputs()

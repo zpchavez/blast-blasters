@@ -49,15 +49,15 @@ export default {
         return nonWinningPlayers;
     },
 
-    getLead()
+    getFirstToLastPlaceDifference()
     {
         const sortedScores = this.getSortedScores();
-        return sortedScores[0] - sortedScores[1];
+        return sortedScores[0] - sortedScores[sortedScores.length - 1];
     },
 
     getLeadingPlayer()
     {
-        const lead = this.getLead();
+        const lead = this.getFirstToLastPlaceDifference();
         if (lead === 0) {
             return null;
         }
