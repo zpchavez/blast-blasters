@@ -244,8 +244,10 @@ class Player extends AbstractObject
             this.sfx.pop.play();
             return;
         }
-        if (hitBy === this.playerNum && globalState.state.score[this.playerNum] > 0) {
-            globalState.state.score[hitBy] -= 1;
+        if (hitBy === this.playerNum) {
+            if (globalState.state.score[this.playerNum] > 0) {
+                globalState.state.score[hitBy] -= 1;
+            }
         } else {
             globalState.state.score[hitBy] += 1;
         }
