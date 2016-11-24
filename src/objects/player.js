@@ -4,6 +4,7 @@ import Blast from './blast';
 import globalState from '../util/global-state';
 import colors from '../data/colors';
 import DelayTimer from '../util/delay';
+import soundRegistry from '../util/sound-registry';
 
 class Player extends AbstractObject
 {
@@ -40,12 +41,12 @@ class Player extends AbstractObject
         }
 
         this.sfx = {
-            blast: game.add.audio('blast'),
-            reload: game.add.audio('reload'),
-            hitPlayer: game.add.audio('hit-player'),
-            dash: game.add.audio('dash'),
-            pop: game.add.audio('pop'),
-            shieldHit: game.add.audio('shield-hit'),
+            blast: soundRegistry.addOrGet(game, 'blast'),
+            reload: soundRegistry.addOrGet(game, 'reload'),
+            hitPlayer: soundRegistry.addOrGet(game, 'hit-player'),
+            dash: soundRegistry.addOrGet(game, 'dash'),
+            pop: soundRegistry.addOrGet(game, 'pop'),
+            shieldHit: soundRegistry.addOrGet(game, 'shield-hit'),
         };
 
         this.delayTimer = new DelayTimer(game);
