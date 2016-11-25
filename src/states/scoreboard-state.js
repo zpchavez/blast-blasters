@@ -1,6 +1,7 @@
 import AbstractState from './abstract-state';
 import ModificationState from './modification-state';
 import MainMenuState from './main-menu-state';
+import TextState from './text-state';
 import globalState from '../util/global-state';
 import colors from '../data/colors';
 import leftpad from '../util/leftpad';
@@ -23,33 +24,36 @@ class ScoreboardState extends AbstractState
 
         const winningPlayers = score.getWinningPlayers();
 
+        this.renderPlayerKills();
+        this.renderScore();
+        if (winningPlayers.length > 1) {
+            // It's a tie. The non-winning players are eliminated.
+            globalState.set('eliminatedPlayers', score.getNonWinningPlayers());
+        }
+
         if (winningPlayers.length === 1) {
-            this.renderWinner(winningPlayers[0]);
-            this.delayTimer.setTimeout(this.returnToMainMenu.bind(this), 3000);
+            this.delayTimer.setTimeout(this.showWinnerAndReturnToMainMenu.bind(this, winningPlayers[0]), 3000);
         } else {
-            this.renderPlayerKills();
-            this.renderScore();
-            if (winningPlayers.length > 1) {
-                // It's a tie. The non-winning players are eliminated.
-                globalState.set('eliminatedPlayers', score.getNonWinningPlayers());
-            }
             this.delayTimer.setTimeout(this.loadModScreen.bind(this), 3000);
         }
     }
 
-    renderWinner(player)
+    showWinnerAndReturnToMainMenu(player)
     {
         const winnerColor = colors[globalState.get('colors')[player]];
-        const winnerText = this.game.add.text(
-            this.game.width / 2,
-            this.game.height / 2 - 100,
-            winnerColor.name.toUpperCase() + ' WINS!',
-            {
-                font: '42px Arial',
-                fill: '#ffffff',
-            }
-        )
-        winnerText.anchor.set(0.5);
+        const text = winnerColor.name.toUpperCase() + ' WINS!'
+
+        globalState.reset();
+        this.game.state.add(
+            'winner',
+            new TextState(
+                text,
+                'main-menu',
+                new MainMenuState(),
+                2000
+            ),
+            true
+        );
     }
 
     renderPlayerKills()
@@ -136,12 +140,6 @@ class ScoreboardState extends AbstractState
     loadModScreen()
     {
         this.game.state.add('game', new ModificationState(), true);
-    }
-
-    returnToMainMenu()
-    {
-        globalState.reset();
-        this.game.state.add('main-menu', new MainMenuState(), true);
     }
 }
 

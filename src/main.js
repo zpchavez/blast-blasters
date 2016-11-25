@@ -3,15 +3,23 @@ import GameState from './states/game-state';
 import globalState from './util/global-state';
 import queryString from 'query-string';
 
-var game = new Phaser.Game(
+const queryOptions = queryString.parse(window.location.search);
+
+let renderer = Phaser.AUTO;
+if (queryOptions.renderer === 'canvas') {
+    renderer = Phaser.CANVAS;
+} else if (queryOptions.renderer === 'webgl') {
+    renderer = Phaser.WEBGL;
+}
+
+let game = new Phaser.Game(
     1280,
     704,
-    Phaser.AUTO,
+    renderer,
     'phaser',
     null
 );
 
-const queryOptions = queryString.parse(window.location.search);
 if (queryOptions.players) {
     globalState.set('players', parseInt(queryOptions.players, 10));
     globalState.state.round = 1;

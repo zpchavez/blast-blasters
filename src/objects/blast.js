@@ -1,6 +1,7 @@
 import AbstractObject from './abstract-object'
 import Player from './player';
 import globalState from '../util/global-state';
+import soundRegistry from '../util/sound-registry';
 
 class Blast extends AbstractObject
 {
@@ -12,10 +13,10 @@ class Blast extends AbstractObject
         this.initPhysics(this.state);
 
         this.sfx = {
-            hitWall: game.add.audio('hit-wall'),
-            fizzle: game.add.audio('fizzle'),
-            bounce: game.add.audio('bounce'),
-        }
+            hitWall: soundRegistry.addOrGet(game, 'hit-wall'),
+            fizzle: soundRegistry.addOrGet(game, 'fizzle'),
+            bounce: soundRegistry.addOrGet(game, 'bounce'),
+        };
     }
 
     setBounces(count)
