@@ -5,6 +5,7 @@ import Controls, {
     DASH,
     FIRE,
     LEFT_STICK,
+    PAUSE,
     RELOAD,
     RIGHT_STICK,
 } from '../util/controls';
@@ -58,6 +59,10 @@ class GameState extends AbstractState
 
     update()
     {
+        if (this.isPaused()) {
+            return;
+        }
+
         this.players.forEach((player, playerNumber) => {
             if (this.controls.isDown(playerNumber, LEFT_STICK)) {
                 player.accelerate(this.controls.getLeftStickAngle(playerNumber));
@@ -138,12 +143,45 @@ class GameState extends AbstractState
     initInputs()
     {
         this.controls = new Controls(this.game);
+
+        const ifUnpaused = (callback) => () => {
+            if (! this.isPaused()) {
+                return callback();
+            } else {
+                return;
+            }
+        };
+
         this.players.forEach((player, playerNumber) => {
-            this.controls.onDown(playerNumber, FIRE, () => player.fire());
-            this.controls.onUp(playerNumber, FIRE, () => player.stopAutoFire());
-            this.controls.onDown(playerNumber, DASH, () => player.dash());
-            this.controls.onDown(playerNumber, RELOAD, () => player.reload());
+            this.controls.onDown(playerNumber, PAUSE, this.togglePause.bind(this));
+            this.controls.onDown(playerNumber, FIRE, ifUnpaused(player.fire.bind(player)));
+            this.controls.onUp(playerNumber, FIRE, ifUnpaused(player.stopAutoFire.bind(player)));
+            this.controls.onDown(playerNumber, DASH, ifUnpaused(player.dash.bind(player)));
+            this.controls.onDown(playerNumber, RELOAD, ifUnpaused(player.reload.bind(player)));
         });
+    }
+
+    togglePause()
+    {
+        if (this.game.physics.p2.paused) {
+            this.game.time.events.resume();
+            this.roundTimer.resume();
+            if (this.hurryUpTimer) {
+                this.hurryUpTimer.resume();
+            }
+        } else {
+            this.game.time.events.pause();
+            this.roundTimer.pause();
+            if (this.hurryUpTimer) {
+                this.hurryUpTimer.pause();
+            }
+        }
+        this.game.physics.p2.paused = ! this.game.physics.p2.paused;
+    }
+
+    isPaused()
+    {
+        return this.game.physics.p2.paused;
     }
 
     spawnPlayers()
