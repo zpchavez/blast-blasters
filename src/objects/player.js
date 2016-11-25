@@ -249,7 +249,9 @@ class Player extends AbstractObject
                 globalState.state.score[hitBy] -= 1;
             }
         } else {
-            globalState.state.score[hitBy] += 1;
+            const scoreBoostMod = globalState.getMod(hitBy, 'SCORE_BOOST');
+            const scoreBonus = scoreBoostMod ? scoreBoostMod.level : 0;
+            globalState.state.score[hitBy] += (1 + scoreBonus);
         }
         this.getHitCallback(hitBy);
         this.sfx.hitPlayer.play();

@@ -6,7 +6,7 @@ export default {
     },
     AMMO_BLAMMO: {
         name: 'Ammo Blammo',
-        description: 'Longer lasting consecutive blasting',
+        description: 'Longer lasting consecutive blasting (more ammo)',
         maxLevel: 3,
     },
     FASTER_RELOAD: {
@@ -32,6 +32,11 @@ export default {
     SHIELD: {
         name: 'Shield',
         description: 'Withstand an extra blast',
+        maxLevel: 3,
+    },
+    SCORE_BOOST: {
+        name: 'Score Boost',
+        description: 'Get an extra point for every player defeated',
         maxLevel: 3,
     }
 }
