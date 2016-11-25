@@ -79,6 +79,12 @@ export default {
         return nonLeadingPlayers;
     },
 
+    isTieForFirst()
+    {
+        const sortedScores = this.getSortedScores();
+        return sortedScores[0] === sortedScores[1];
+    },
+
     getWinningScore()
     {
         return globalState.get('players') * 5;
