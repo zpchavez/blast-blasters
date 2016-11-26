@@ -1,13 +1,17 @@
 import AbstractState from './abstract-state';
+import MainMenuState from './main-menu-state';
 import queryString from 'query-string';
 import Player from '../objects/player';
 import Controls, {
     DASH,
+    DOWN,
     FIRE,
     LEFT_STICK,
     PAUSE,
     RELOAD,
     RIGHT_STICK,
+    SELECT,
+    UP,
 } from '../util/controls';
 import globalState from '../util/global-state';
 import ScoreboardState from './scoreboard-state';
@@ -15,6 +19,15 @@ import rng from '../util/rng';
 import DelayTimer from '../util/delay';
 
 const ROUND_TIME_LIMIT = 20000;
+const PAUSE_MENU_RESUME = 1;
+const PAUSE_MENU_EXIT = 2;
+
+const menuStyle = {
+    font: '32px Arial',
+    fill: '#ffffff',
+    stroke: '#000000',
+    strokeThickness: 3,
+};
 
 class GameState extends AbstractState
 {
@@ -75,6 +88,13 @@ class GameState extends AbstractState
         let remainingPlayers = this.players.filter(player => player.game !== null).length;
         if (remainingPlayers <= 1) {
             this.delayTimer.setTimeout(this.endRound.bind(this), 1000);
+        }
+    }
+
+    shutdown()
+    {
+        if (this.controls) {
+            this.controls.reset();
         }
     }
 
@@ -153,35 +173,161 @@ class GameState extends AbstractState
         };
 
         this.players.forEach((player, playerNumber) => {
-            this.controls.onDown(playerNumber, PAUSE, this.togglePause.bind(this));
-            this.controls.onDown(playerNumber, FIRE, ifUnpaused(player.fire.bind(player)));
+            this.controls.onDown(playerNumber, UP, this.togglePauseMenuCursor.bind(this, player));
+            this.controls.onDown(playerNumber, DOWN, this.togglePauseMenuCursor.bind(this, player));
+            this.controls.onDown(playerNumber, SELECT, this.selectPauseMenuOption.bind(this, player));
+
+            this.controls.onDown(playerNumber, PAUSE, this.togglePause.bind(this, player));
+
+            // this.controls.onDown(playerNumber, FIRE, ifUnpaused(player.fire.bind(player)));
+            this.controls.onDown(
+                playerNumber,
+                FIRE,
+                () => {
+                    if (this.isPaused()) {
+                        this.selectPauseMenuOption(player);
+                    } else {
+                        player.fire();
+                    }
+                }
+            );
+
             this.controls.onUp(playerNumber, FIRE, ifUnpaused(player.stopAutoFire.bind(player)));
             this.controls.onDown(playerNumber, DASH, ifUnpaused(player.dash.bind(player)));
             this.controls.onDown(playerNumber, RELOAD, ifUnpaused(player.reload.bind(player)));
         });
     }
 
-    togglePause()
+    togglePause(player)
     {
-        if (this.game.physics.p2.paused) {
-            this.game.time.events.resume();
-            this.roundTimer.resume();
-            if (this.hurryUpTimer) {
-                this.hurryUpTimer.resume();
-            }
-        } else {
-            this.game.time.events.pause();
-            this.roundTimer.pause();
-            if (this.hurryUpTimer) {
-                this.hurryUpTimer.pause();
-            }
+        if (this.isPaused() && this.pausedBy === player.playerNum) {
+            this.unpause();
+        } else if (! this.isPaused()){
+            this.pause(player);
         }
-        this.game.physics.p2.paused = ! this.game.physics.p2.paused;
+    }
+
+    pause(player)
+    {
+        this.game.time.events.pause();
+        this.roundTimer.pause();
+        if (this.hurryUpTimer) {
+            this.hurryUpTimer.pause();
+        }
+        this.pausedBy = player.playerNum;
+        this.showPauseMenu(player);
+        this.game.physics.p2.paused = true;
+    }
+
+    unpause()
+    {
+        this.game.time.events.resume();
+        this.roundTimer.resume();
+        if (this.hurryUpTimer) {
+            this.hurryUpTimer.resume();
+        }
+        this.hidePauseMenu();
+        this.game.physics.p2.paused = false;
     }
 
     isPaused()
     {
         return this.game.physics.p2.paused;
+    }
+
+    hidePauseMenu()
+    {
+        this.menuGraphics.destroy();
+        this.menuResumeText.destroy();
+        this.menuExitText.destroy();
+        this.menuCursor.destroy();
+    }
+
+    showPauseMenu(player)
+    {
+        this.menuGraphics = this.game.add.graphics(
+            this.game.width / 2,
+            this.game.height / 2
+        );
+        this.menuGraphics.beginFill(player.getColorInfo().hex, 0.9);
+        this.menuGraphics.drawRect(
+            -200,
+            -100,
+            400,
+            200
+        );
+        this.menuGraphics.endFill();
+        this.menuGraphics.generateTexture();
+
+        this.menuResumeText = this.game.add.text(
+            (this.game.width / 2) - 100,
+            (this.game.height / 2) - 50,
+            'Resume',
+            menuStyle
+        );
+
+        this.menuExitText = this.game.add.text(
+            (this.game.width / 2) - 100,
+            (this.game.height / 2),
+            'Exit to Main Menu',
+            menuStyle
+        );
+
+        this.pauseMenuCursorPosition = PAUSE_MENU_RESUME;
+
+        this.renderPauseMenuCursor();
+    }
+
+    renderPauseMenuCursor()
+    {
+        if (! this.pauseMenuCursorPosition) {
+            this.pauseMenuCursorPosition = PAUSE_MENU_RESUME;
+        }
+
+        const selectedText = (
+            this.pauseMenuCursorPosition === PAUSE_MENU_RESUME ?
+            this.menuResumeText :
+            this.menuExitText
+        );
+
+        if (this.menuCursor) {
+            this.menuCursor.destroy();
+        }
+
+        this.menuCursor = this.game.add.text(
+            selectedText.x - 50,
+            selectedText.y,
+            '▶',
+            menuStyle
+        )
+    }
+
+    togglePauseMenuCursor(player)
+    {
+        if (! this.isPaused() || this.pausedBy !== player.playerNum) {
+            return;
+        }
+
+        if (this.pauseMenuCursorPosition === PAUSE_MENU_RESUME) {
+            this.pauseMenuCursorPosition = PAUSE_MENU_EXIT;
+        } else {
+            this.pauseMenuCursorPosition = PAUSE_MENU_RESUME;
+        }
+
+        this.renderPauseMenuCursor();
+    }
+
+    selectPauseMenuOption(player) {
+        if (! this.isPaused() || this.pausedBy !== player.playerNum) {
+            return;
+        }
+
+        if (this.pauseMenuCursorPosition === PAUSE_MENU_RESUME) {
+            this.unpause();
+        } else if (this.pauseMenuCursorPosition === PAUSE_MENU_EXIT) {
+            this.unpause();
+            this.game.state.add('main-menu', new MainMenuState(), true);
+        }
     }
 
     spawnPlayers()
