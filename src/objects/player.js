@@ -317,7 +317,13 @@ class Player extends AbstractObject
             return 0;
         }
 
-        return 400 * this.getAccelerationMultiplier();
+        const justPlainFasterMod = globalState.getMod(this.playerNum, 'JUST_PLAIN_FASTER');
+        let speedBonus = 0;
+        if (justPlainFasterMod) {
+            speedBonus = 50 * justPlainFasterMod.level;
+        }
+
+        return (400 + speedBonus) * this.getAccelerationMultiplier();
     }
 
     getColorInfo()

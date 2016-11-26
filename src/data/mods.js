@@ -19,6 +19,11 @@ export default {
         description: 'Blasts go faster',
         maxLevel: 3
     },
+    JUST_PLAIN_FASTER: {
+        name: 'Just Plain Faster',
+        description: 'Move faster',
+        maxLevel: 3,
+    },
     AUTO_BLASTER: {
         name: 'Auto Blaster',
         description: 'Hold down blast to auto-blast',
@@ -38,5 +43,5 @@ export default {
         name: 'Score Boost',
         description: 'Get an extra point for every player defeated',
         maxLevel: 3,
-    }
+    },
 }
