@@ -7,6 +7,9 @@ import colors from '../data/colors';
 import leftpad from '../util/leftpad';
 import score from '../util/score';
 import DelayTimer from '../util/delay';
+import queryString from 'query-string';
+
+const queryOptions = queryString.parse(window.location.search);
 
 class ScoreboardState extends AbstractState
 {
@@ -34,7 +37,11 @@ class ScoreboardState extends AbstractState
         if (winningPlayers.length === 1) {
             this.delayTimer.setTimeout(this.showWinnerAndReturnToMainMenu.bind(this, winningPlayers[0]), 3000);
         } else {
-            this.delayTimer.setTimeout(this.loadModScreen.bind(this), 3000);
+            if (typeof queryOptions.nomods !== 'undefined') {
+                this.delayTimer.setTimeout(this.loadNextRound.bind(this), 3000);
+            } else {
+                this.delayTimer.setTimeout(this.loadModScreen.bind(this), 3000);
+            }
         }
     }
 
