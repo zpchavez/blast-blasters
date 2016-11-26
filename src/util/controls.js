@@ -9,6 +9,7 @@ export const LEFT = 'LEFT';
 export const RIGHT = 'RIGHT';
 export const SELECT = 'SELECT';
 export const CANCEL = 'CANCEL';
+export const PAUSE = 'PAUSE';
 
 const gamepadButtonMappings = {};
 gamepadButtonMappings[FIRE] = Phaser.Gamepad.XBOX360_RIGHT_BUMPER;
@@ -18,6 +19,7 @@ gamepadButtonMappings[UP] = Phaser.Gamepad.XBOX360_DPAD_UP;
 gamepadButtonMappings[DOWN] = Phaser.Gamepad.XBOX360_DPAD_DOWN;
 gamepadButtonMappings[LEFT] = Phaser.Gamepad.XBOX360_DPAD_LEFT;
 gamepadButtonMappings[RIGHT] = Phaser.Gamepad.XBOX360_DPAD_RIGHT;
+gamepadButtonMappings[PAUSE] = Phaser.Gamepad.XBOX360_START;
 gamepadButtonMappings[SELECT] = [
     Phaser.Gamepad.XBOX360_RIGHT_BUMPER,
     Phaser.Gamepad.XBOX360_A

@@ -7,9 +7,7 @@ the playing field!
 
 ### How to Play
 
-Blast Blasters requires gamepads to play. Any gamepad supported by the Gamepad API
-should work, but XBox360 controllers are recommended.
-
-You should be using Google Chrome, as the game has not be tested with any other browser.
+Blast Blasters requires gamepads and Google Chrome. Only XBox360 controllers have been
+tested, but other controllers supported by the Gamepad API _might_ work.
 
 You can play the game [here](https://zpchavez.github.io/blast-blasters).

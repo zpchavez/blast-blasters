@@ -1,4 +1,5 @@
 import AbstractState from './abstract-state';
+import MainMenuState from './main-menu-state';
 import Controls from '../util/controls';
 import Player from '../objects/player';
 import colors from '../data/colors';
@@ -173,16 +174,20 @@ class SelectColorState extends AbstractState
         return selections.length === globalState.get('players');
     }
 
-    unselectColor(player)
+    cancelSelectionOrReturnToMainMenu(player)
     {
         if (this.allSelectedMessage) {
             this.allSelectedMessage.destroy();
             this.allSelectedMessage = null;
         }
 
-        this.selectedColors[player] = null;
-        this.playerSprites[player].cannonSprite.visible = false;
-        this.playerSprites[player].body.angle = 0;
+        if (this.selectedColors[player] === null) {
+            this.game.state.add('main-menu', new MainMenuState(), true);
+        } else {
+            this.selectedColors[player] = null;
+            this.playerSprites[player].cannonSprite.visible = false;
+            this.playerSprites[player].body.angle = 0;
+        }
     }
 
     update()
@@ -225,7 +230,7 @@ class SelectColorState extends AbstractState
             this.controls.onDown(player, 'LEFT', this.changeColor.bind(this, player, 'LEFT'));
             this.controls.onDown(player, 'RIGHT', this.changeColor.bind(this, player, 'RIGHT'));
             this.controls.onDown(player, 'SELECT', this.selectColor.bind(this, player));
-            this.controls.onDown(player, 'CANCEL', this.unselectColor.bind(this, player));
+            this.controls.onDown(player, 'CANCEL', this.cancelSelectionOrReturnToMainMenu.bind(this, player));
         }
     }
 }

@@ -319,6 +319,11 @@ class Player extends AbstractObject
 
         return 400 * this.getAccelerationMultiplier();
     }
+
+    getColorInfo()
+    {
+        return colors[globalState.state.colors[this.playerNum]];
+    }
 }
 
 Player.create = (playerNum, game, x, y) => {
