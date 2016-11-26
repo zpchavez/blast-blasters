@@ -3,7 +3,7 @@
  <tileset firstgid="1" source="tileset.tsx"/>
  <layer name="walls" width="40" height="22">
   <data encoding="base64" compression="zlib">
-   eJztl0EKACAIBPX/n+4kdDFctbBywEuoDWRQTESsxIyW4w2kd1XaL4bmt3MWkN6r9dP85mc5d2Q2dvghZPpl7BfNl5r28+VLzY1+L9zfbNovBupX+X1QhfaLkfmHQcPaewDfDACz
+   eJztl0sKACAIBfX+l24bgeHzE5IOuAmzAQ2KiYiF2JFyrIHUrsr4+ZD8MmcBqX1bf003P21vtHOR4acl2i/qTEvuuW/8+vn9cH+jGT8fqF/l90EVxs9H5B8GDW3tBd9AALM=
   </data>
  </layer>
  <layer name="spawn-points" width="40" height="22">

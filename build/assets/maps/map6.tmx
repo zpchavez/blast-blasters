@@ -3,12 +3,12 @@
  <tileset firstgid="1" source="tileset.tsx"/>
  <layer name="walls" width="40" height="22">
   <data encoding="base64" compression="zlib">
-   eJzt1FEKACAIA1C9/6U7gbBsSoMN+grsVWhGRBZrK9X5247bdH3IPRlvoehDarJ86P6tjxX77FPrX/vmfUgdRm1FX+cvXn3d+aLqY/eHfXu+n6LiY8z6KccBhpEBEQ==
+   eJzt1FEKACAIA1C7/6U7gaSySYMJfUXrVdiJiJOMrcr233Z0a+KrnhFxF4q+VybSV53vrEGWffap9a99XF81g5mNyGBld98C4Zv+L4o+Rn/Yt+f7qVR8iL+e5biHiQER
   </data>
  </layer>
  <layer name="spawn-points" width="40" height="22">
   <data encoding="base64" compression="zlib">
-   eJzt1bEJADAIAEEb9185ra0gRPBugu8+ggn5O6DY1ALALd0HeRZAzwO81AAV
+   eJzt1bEJADAIAEGb7L+yra1BMJC7Cb77CCac7YDipRYA/nHzH88C6Em86AAV
   </data>
  </layer>
 </map>
