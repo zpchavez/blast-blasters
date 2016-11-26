@@ -288,9 +288,9 @@ class Player extends AbstractObject
         const fasterBlasterMod = globalState.getMod(this.playerNum, 'FASTER_BLASTER');
         let speedBonus = 0;
         if (fasterBlasterMod) {
-            speedBonus = 50 * fasterBlasterMod.level;
+            speedBonus = 100 * fasterBlasterMod.level;
         }
-        return 550 + speedBonus;
+        return 500 + speedBonus;
     }
 
     getDashMultiplier()
@@ -317,7 +317,13 @@ class Player extends AbstractObject
             return 0;
         }
 
-        return 400 * this.getAccelerationMultiplier();
+        const justPlainFasterMod = globalState.getMod(this.playerNum, 'JUST_PLAIN_FASTER');
+        let speedBonus = 0;
+        if (justPlainFasterMod) {
+            speedBonus = 50 * justPlainFasterMod.level;
+        }
+
+        return (400 + speedBonus) * this.getAccelerationMultiplier();
     }
 
     getColorInfo()
