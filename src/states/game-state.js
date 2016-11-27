@@ -78,10 +78,10 @@ class GameState extends AbstractState
 
         this.players.forEach((player, playerNumber) => {
             if (this.controls.isDown(playerNumber, LEFT_STICK)) {
-                player.accelerate(this.controls.getLeftStickAngle(playerNumber));
+                player.accelerate(this.controls.getMovementStickAngle(playerNumber));
             }
             if (this.controls.isDown(playerNumber, RIGHT_STICK)) {
-                player.aim(this.controls.getRightStickAngle(playerNumber));
+                player.aim(this.controls.getAimingStickAngle(playerNumber));
             }
         });
 

@@ -1,3 +1,5 @@
+import globalState from './global-state';
+
 export const LEFT_STICK = 'LEFT_STICK';
 export const RIGHT_STICK = 'RIGHT_STICK';
 export const FIRE = 'FIRE';
@@ -47,9 +49,9 @@ class Controls
 
     isDown(player, button)
     {
-        if (button === LEFT_STICK && this.getLeftStickAngle(player) !== false) {
+        if (button === LEFT_STICK && this.getMovementStickAngle(player) !== false) {
             return true;
-        } else if (button === RIGHT_STICK && this.getRightStickAngle(player) !== false) {
+        } else if (button === RIGHT_STICK && this.getAimingStickAngle(player) !== false) {
             return true;
         } else if ([LEFT_STICK, RIGHT_STICK].indexOf(button) !== -1) {
             return;
@@ -79,14 +81,22 @@ class Controls
         });
     }
 
-    getLeftStickAngle(player)
+    getMovementStickAngle(player)
     {
-        return this._getStickAngle('left', player);
+        if (globalState.state.lefties[player]) {
+            return this._getStickAngle('right', player);
+        } else {
+            return this._getStickAngle('left', player);
+        }
     }
 
-    getRightStickAngle(player)
+    getAimingStickAngle(player)
     {
-        return this._getStickAngle('right', player);
+        if (globalState.state.lefties[player]) {
+            return this._getStickAngle('left', player);
+        } else {
+            return this._getStickAngle('right', player);
+        }
     }
 
     reset()

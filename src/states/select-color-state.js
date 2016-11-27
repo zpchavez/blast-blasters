@@ -17,6 +17,7 @@ class SelectColorState extends AbstractState
         this.renderText();
         this.renderPlayers();
         this.initInputs();
+        this.renderLeftyIndicators();
     }
 
     renderText()
@@ -28,11 +29,20 @@ class SelectColorState extends AbstractState
             {
                 font: '42px Arial',
                 fill: '#ffffff',
-                stroke: '#000000',
-                strokeThickness: 5,
             }
         );
-        this.titleText.anchor.setTo(0.5, 0.5);
+        this.titleText.anchor.setTo(0.5);
+
+        this.leftyModeText = this.game.add.text(
+            this.game.width / 2,
+            this.game.height / 2 + 300,
+            'Press Dash to toggle Lefty Mode',
+            {
+                font: '20px Arial',
+                fill: '#ffffff',
+            }
+        );
+        this.leftyModeText.anchor.setTo(0.5);
     }
 
     renderPlayers()
@@ -209,11 +219,40 @@ class SelectColorState extends AbstractState
             {
                 font: '24px Arial',
                 fill: '#ffffff',
-                stroke: '#000000',
-                strokeThickness: 5,
             }
         );
         this.allSelectedMessage.anchor.setTo(0.5, 0.5);
+    }
+
+    toggleLeftyMode(player)
+    {
+        globalState.state.lefties[player] = ! globalState.state.lefties[player];
+        this.renderLeftyIndicators();
+    }
+
+    renderLeftyIndicators()
+    {
+        if (! this.leftyIndicators) {
+            this.leftyIndicators = [null, null, null, null];
+        }
+
+        globalState.state.lefties.forEach((lefty, player) => {
+            if (lefty) {
+                this.leftyIndicators[player] = this.game.add.text(
+                    this.playerSprites[player].x,
+                    this.playerSprites[player].y + 50,
+                    'LH',
+                    {
+                        font: '24px Arial',
+                        fill: '#ffffff',
+                    }
+                );
+                this.leftyIndicators[player].anchor.setTo(0.5);
+            } else if (this.leftyIndicators[player]) {
+                this.leftyIndicators[player].destroy();
+                this.leftyIndicators[player] = null;
+            }
+        });
     }
 
     startGame()
@@ -230,6 +269,7 @@ class SelectColorState extends AbstractState
             this.controls.onDown(player, 'LEFT', this.changeColor.bind(this, player, 'LEFT'));
             this.controls.onDown(player, 'RIGHT', this.changeColor.bind(this, player, 'RIGHT'));
             this.controls.onDown(player, 'SELECT', this.selectColor.bind(this, player));
+            this.controls.onDown(player, 'DASH', this.toggleLeftyMode.bind(this, player));
             this.controls.onDown(player, 'CANCEL', this.cancelSelectionOrReturnToMainMenu.bind(this, player));
         }
     }
