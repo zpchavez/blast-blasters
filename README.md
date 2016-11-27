@@ -2,8 +2,11 @@
 #### It's a Blast!
 
 Blast Blasters is a 4-player local free-for-all in which the player
-that takes the lead must choose to augment their foes in order to level
-the playing field!
+that takes the lead must power up their opponents with various modifications!
+
+[Watch the trailer!](https://youtu.be/te_5VkPqI9E)
+
+[![Screenshot](https://cloud.githubusercontent.com/assets/717690/20644500/4f0b2bea-b3f3-11e6-8ee4-d7c588d26ea3.png)](https://youtu.be/te_5VkPqI9E)
 
 ### How to Play
 

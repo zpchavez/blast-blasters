@@ -190,7 +190,7 @@ class Player extends AbstractObject
         const dashRecoveryMod = globalState.getMod(this.playerNum, 'DASH_RECOVERY');
         let bonusTime = 0;
         if (dashRecoveryMod) {
-            bonusTime = 100 * dashRecoveryMod.level;
+            bonusTime = 150 * dashRecoveryMod.level;
         }
 
         this.dashState = 'DASHING';

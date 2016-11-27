@@ -91,13 +91,6 @@ class GameState extends AbstractState
         }
     }
 
-    shutdown()
-    {
-        if (this.controls) {
-            this.controls.reset();
-        }
-    }
-
     initRoundTimer()
     {
         this.roundTimer = this.game.time.create();

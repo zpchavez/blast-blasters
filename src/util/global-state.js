@@ -1,20 +1,20 @@
 import colors from '../data/colors';
 
-const initialState = Object.assign(
-    {
-        colors: [0, 1, 2, 3],
-        round: 0,
-        mods: [],
-        // Players that are out of the game because other players are tied for the win
-        eliminatedPlayers: [],
-    }
-);
-
 export default {
-    state: Object.assign({}, initialState),
+    state: {},
+
+    getInitialState() {
+        return {
+            colors: [0, 1, 2, 3],
+            round: 0,
+            mods: [],
+            // Players that are out of the game because other players are tied for the win
+            eliminatedPlayers: [],
+        };
+    },
 
     reset() {
-        this.state = Object.assign({}, initialState);
+        this.state = Object.assign({}, this.getInitialState());
     },
 
     set(key, value) {
