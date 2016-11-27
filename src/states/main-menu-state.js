@@ -13,6 +13,8 @@ class MainMenuState extends AbstractState
     {
         super.create();
 
+        globalState.reset();
+
         this.numPlayersSelection = PLAYERS_2;
         this.playerChoices = [
             { players: 2 },
