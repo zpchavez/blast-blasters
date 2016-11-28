@@ -134,24 +134,13 @@ class Player extends AbstractObject
 
         this.ammo -= 1;
 
-        let xRotation = Math.cos(this.aimAngle - (90 * Math.PI / 180));
-        let yRotation = Math.sin(this.aimAngle - (90 * Math.PI / 180));
-        let spawnPoint = [
-            this.x + (32 * xRotation),
-            this.y + (32 * yRotation),
-        ];
-
-        const blast = Blast.create(this.state.game, spawnPoint[0], spawnPoint[1]);
-        const bounceMod = globalState.getMod(this.playerNum, 'BLAST_BOUNCE');
-        blast.setBounces(bounceMod ? bounceMod.level : 0);
-        blast.tint = colors[globalState.get('colors')[this.playerNum]].hex;
-        blast.addToCollisionGroup(this.collisionGroup);
-        this.game.world.addChild(blast);
-
-        const velocity = rotateVector(this.aimAngle, [0, this.getBlastVelocity() * -1]);
-        blast.body.velocity.x = velocity[0];
-        blast.body.velocity.y = velocity[1];
-        blast.shotBy = this.playerNum;
+        const blast = Blast.create(
+            this.state.game,
+            this.x,
+            this.y,
+            this.aimAngle,
+            this
+        );
 
         this.sfx.blast.play();
 

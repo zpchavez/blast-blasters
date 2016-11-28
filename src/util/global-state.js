@@ -6,6 +6,7 @@ export default {
     getInitialState() {
         return {
             colors: [0, 1, 2, 3],
+            lefties: [false, false, false, false],
             round: 0,
             mods: [],
             // Players that are out of the game because other players are tied for the win

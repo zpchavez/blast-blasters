@@ -21,6 +21,7 @@ let game = new Phaser.Game(
 );
 
 if (queryOptions.players) {
+    globalState.reset();
     globalState.set('players', parseInt(queryOptions.players, 10));
     globalState.state.round = 1;
     game.state.add('game', new GameState(), true);
