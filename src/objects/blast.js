@@ -7,13 +7,14 @@ import { rotateVector } from '../util/math';
 
 class Blast extends AbstractObject
 {
-    constructor(game, x, y, key, frame, rotation, shotBy)
+    constructor(game, x, y, key, frame, rotation, shotBy, isFirework)
     {
         super(game, x, y, key, frame);
 
         this.state = game.state;
         this.rotation = rotation;
         this.shotBy = shotBy;
+        this.isFirework = isFirework;
         this.initPhysics(this.state);
 
         this.sfx = {
@@ -23,6 +24,36 @@ class Blast extends AbstractObject
         };
 
         this.blast();
+
+        if (globalState.getMod(shotBy.playerNum, 'FIREWORKS') && ! this.isFirework) {
+            this.game.time.events.add(
+                500,
+                this.explode.bind(this, this.rotation)
+            );
+        }
+    }
+
+    explode(rotation)
+    {
+        if (this.game === null) {
+            return;
+        }
+
+        for (let i = 45; i < 360; i += 45) {
+            // Don't shoot back at yourself
+            if (i === 180) {
+                continue;
+            }
+            Blast.create(
+                this.game,
+                this.x,
+                this.y,
+                rotation + Phaser.Math.degToRad(i),
+                this.shotBy,
+                true
+            );
+        }
+        this.destroy();
     }
 
     blast()
@@ -90,8 +121,8 @@ class Blast extends AbstractObject
     }
 }
 
-Blast.create = (game, x, y, rotation, shotBy) => {
-    return new Blast(game, x, y, 'blast', 0, rotation, shotBy);
+Blast.create = (game, x, y, rotation, shotBy, isFirework = false) => {
+    return new Blast(game, x, y, 'blast', 0, rotation, shotBy, isFirework);
 };
 
 export default Blast;

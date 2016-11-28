@@ -44,4 +44,9 @@ export default {
         description: 'Get an extra point for every player defeated',
         maxLevel: 3,
     },
+    FIREWORKS: {
+        name: 'Fireworks',
+        description: 'Blasts burst like fireworks',
+        maxLevel: 1,
+    },
 }
