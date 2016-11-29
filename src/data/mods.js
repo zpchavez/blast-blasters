@@ -1,4 +1,8 @@
-export default {
+import queryString from 'query-string';
+
+const queryOptions = queryString.parse(window.location.search);
+
+const mods = {
     BLAST_BOUNCE: {
         name: 'Blast Bounce',
         description: 'Blasts bounce off walls. Bonus: Limited selfie immunity.',
@@ -44,4 +48,16 @@ export default {
         description: 'Get an extra point for every player defeated',
         maxLevel: 3,
     },
+};
+
+if (typeof queryOptions.experimental !== 'undefined') {
+    Object.assign(mods, {
+        FIREWORKS: {
+            name: 'Fireworks',
+            description: 'Blasts burst like fireworks',
+            maxLevel: 1,
+        },
+    });
 }
+
+export default mods;

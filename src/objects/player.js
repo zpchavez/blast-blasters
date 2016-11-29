@@ -342,6 +342,7 @@ Player.loadAssets = (state) => {
     state.load.audio('hit-wall', 'assets/sfx/hit-wall.wav');
     state.load.audio('fizzle', 'assets/sfx/fizzle.wav');
     state.load.audio('pop', 'assets/sfx/pop.wav');
+    state.load.audio('firework', 'assets/sfx/firework.wav');
     state.load.audio('shield-hit', 'assets/sfx/shield-hit.wav');
     state.load.audio('reload', 'assets/sfx/reload.wav');
     state.load.audio('dash', 'assets/sfx/dash.wav');
