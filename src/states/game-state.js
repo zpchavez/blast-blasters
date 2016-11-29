@@ -169,10 +169,7 @@ class GameState extends AbstractState
             this.controls.onDown(playerNumber, UP, this.togglePauseMenuCursor.bind(this, player));
             this.controls.onDown(playerNumber, DOWN, this.togglePauseMenuCursor.bind(this, player));
             this.controls.onDown(playerNumber, SELECT, this.selectPauseMenuOption.bind(this, player));
-
             this.controls.onDown(playerNumber, PAUSE, this.togglePause.bind(this, player));
-
-            // this.controls.onDown(playerNumber, FIRE, ifUnpaused(player.fire.bind(player)));
             this.controls.onDown(
                 playerNumber,
                 FIRE,
@@ -185,7 +182,7 @@ class GameState extends AbstractState
                 }
             );
 
-            this.controls.onUp(playerNumber, FIRE, ifUnpaused(player.stopAutoFire.bind(player)));
+            this.controls.onUp(playerNumber, FIRE, player.stopAutoFire.bind(player));
             this.controls.onDown(playerNumber, DASH, ifUnpaused(player.dash.bind(player)));
             this.controls.onDown(playerNumber, RELOAD, ifUnpaused(player.reload.bind(player)));
         });
@@ -207,6 +204,11 @@ class GameState extends AbstractState
         if (this.hurryUpTimer) {
             this.hurryUpTimer.pause();
         }
+        this.players.forEach(player => {
+            if (player.autoFireTimer) {
+                player.autoFireTimer.pause();
+            }
+        });
         this.pausedBy = player.playerNum;
         this.showPauseMenu(player);
         this.game.physics.p2.paused = true;
@@ -219,6 +221,11 @@ class GameState extends AbstractState
         if (this.hurryUpTimer) {
             this.hurryUpTimer.resume();
         }
+        this.players.forEach(player => {
+            if (player.autoFireTimer) {
+                player.autoFireTimer.resume();
+            }
+        });
         this.hidePauseMenu();
         this.game.physics.p2.paused = false;
     }
