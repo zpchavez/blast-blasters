@@ -18,6 +18,7 @@ class Blast extends AbstractObject
         this.initPhysics(this.state);
 
         this.sfx = {
+            firework: soundRegistry.addOrGet(game, 'firework'),
             hitWall: soundRegistry.addOrGet(game, 'hit-wall'),
             fizzle: soundRegistry.addOrGet(game, 'fizzle'),
             bounce: soundRegistry.addOrGet(game, 'bounce'),
@@ -53,6 +54,7 @@ class Blast extends AbstractObject
                 true
             );
         }
+        this.sfx.firework.play();
         this.destroy();
     }
 
