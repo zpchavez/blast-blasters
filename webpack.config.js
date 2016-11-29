@@ -12,16 +12,21 @@ var environment = (process.env.APP_ENV || 'development');
 var __HOSTNAME__ = 'localhost';
 var __PORT__ = 9123;
 
+var appEntries = [
+    'babel-polyfill',
+    appFolder + '/main.js',
+];
+
+if (environment === 'development') {
+    appEntries.push(
+        'webpack-hot-middleware/client?path=/__webpack_hmr?http://' + __HOSTNAME__ + ':' + __PORT__
+    );
+}
+
 var config = {
   devtools: [],
   entries: {
-    app: [
-        'babel-polyfill',
-        appFolder + '/main.js',
-        (environment === 'development') ?
-            'webpack-hot-middleware/client?path=/__webpack_hmr?http://' + __HOSTNAME__ + ':' + __PORT__ :
-            null
-    ]
+    app: appEntries
   },
   plugins: [
     new Webpack.optimize.OccurrenceOrderPlugin(),

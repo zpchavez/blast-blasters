@@ -14,6 +14,8 @@ class TextState extends AbstractState
 
     create()
     {
+        super.create();
+
         const text = this.game.add.text(
             this.game.width / 2,
             this.game.height / 2,
