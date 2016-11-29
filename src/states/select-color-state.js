@@ -239,7 +239,7 @@ class SelectColorState extends AbstractState
         }
 
         globalState.state.lefties.forEach((lefty, player) => {
-            if (lefty) {
+            if (lefty && ! this.leftyIndicators[player]) {
                 this.leftyIndicators[player] = this.game.add.text(
                     this.playerSprites[player].x,
                     this.playerSprites[player].y + 50,
@@ -250,7 +250,7 @@ class SelectColorState extends AbstractState
                     }
                 );
                 this.leftyIndicators[player].anchor.setTo(0.5);
-            } else if (this.leftyIndicators[player]) {
+            } else if (!lefty && this.leftyIndicators[player]) {
                 this.leftyIndicators[player].destroy();
                 this.leftyIndicators[player] = null;
             }
