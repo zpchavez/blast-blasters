@@ -14,6 +14,8 @@ class SelectColorState extends AbstractState
 
     create()
     {
+        super.create();
+
         this.renderText();
         this.renderPlayers();
         this.initInputs();

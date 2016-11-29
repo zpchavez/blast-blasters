@@ -24,6 +24,8 @@ class ModificationState extends AbstractState
 
     create()
     {
+        super.create();
+
         let modChoices = null;
         if (! score.isTieForFirst() &&
             score.getFirstToLastPlaceDifference() >= this.getModLeadThreshold()
