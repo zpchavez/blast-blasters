@@ -43,11 +43,6 @@ const mods = {
         description: 'Withstand an extra blast',
         maxLevel: 3,
     },
-    SCORE_BOOST: {
-        name: 'Score Boost',
-        description: 'Get an extra point for every player defeated',
-        maxLevel: 3,
-    },
 };
 
 if (typeof queryOptions.experimental !== 'undefined') {
