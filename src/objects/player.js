@@ -26,9 +26,9 @@ class Player extends AbstractObject
         this.cannonSprite.visible = false;
         this.cannonSprite.anchor.setTo(0.5, 0.5);
 
-        // With Blast Bounce mod, player is immune to one self hit per level
+        // With Blast Bounce mod, player is immune to one self hit
         const blastBounceMod = globalState.getMod(this.playerNum, 'BLAST_BOUNCE');
-        this.selfieImmunity = blastBounceMod ? blastBounceMod.level : 0;
+        this.selfieImmunity = blastBounceMod ? 1 : 0;
 
         const shieldMod = globalState.getMod(this.playerNum, 'SHIELD');
         this.shieldHp = shieldMod ? shieldMod.level : 0;
