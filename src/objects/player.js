@@ -26,9 +26,9 @@ class Player extends AbstractObject
         this.cannonSprite.visible = false;
         this.cannonSprite.anchor.setTo(0.5, 0.5);
 
-        // With Blast Bounce mod, player is immune to one self hit per level
+        // With Blast Bounce mod, player is immune to one self hit
         const blastBounceMod = globalState.getMod(this.playerNum, 'BLAST_BOUNCE');
-        this.selfieImmunity = blastBounceMod ? blastBounceMod.level : 0;
+        this.selfieImmunity = blastBounceMod ? 1 : 0;
 
         const shieldMod = globalState.getMod(this.playerNum, 'SHIELD');
         this.shieldHp = shieldMod ? shieldMod.level : 0;
@@ -238,9 +238,7 @@ class Player extends AbstractObject
                 globalState.state.score[hitBy] -= 1;
             }
         } else {
-            const scoreBoostMod = globalState.getMod(hitBy, 'SCORE_BOOST');
-            const scoreBonus = scoreBoostMod ? scoreBoostMod.level : 0;
-            globalState.state.score[hitBy] += (1 + scoreBonus);
+            globalState.state.score[hitBy] += 1;
         }
         this.getHitCallback(hitBy);
         this.sfx.hitPlayer.play();
