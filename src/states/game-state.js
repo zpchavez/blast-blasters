@@ -135,7 +135,6 @@ class GameState extends AbstractState
 
     initPlayers()
     {
-        let playerNumber = 0;
         this.players = [];
         this.playerKills = [];
         for (let playerNumber = 0; playerNumber < this.numPlayers; playerNumber += 1) {
