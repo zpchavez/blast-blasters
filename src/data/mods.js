@@ -10,7 +10,7 @@ const mods = {
     },
     AMMO_BLAMMO: {
         name: "Ammo Blammo",
-        description: "Longer lasting consecutive blasting (more ammo)",
+        description: "Ten more blasts before needing to reload",
         maxLevel: 3
     },
     FASTER_RELOAD: {
